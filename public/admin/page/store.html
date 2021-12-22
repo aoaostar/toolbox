@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>插件中心</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .plugin-item {
+            padding: .5rem;
+            text-align: left;
+        }
+
+        .plugin-item .plugin-main {
+            height: 100px;
+        }
+
+        .plugin-item .plugin-logo {
+            width: 100px;
+            height: 100px;
+            display: block;
+            cursor: pointer;
+        }
+
+        .plugin-content {
+            padding-left: 1rem;
+            overflow: hidden;
+        }
+
+        .plugin-content > * {
+            margin: .3rem 0;
+        }
+
+        .plugin-content > * {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: text-top;
+        }
+
+        .plugin-main {
+            display: flex;
+        }
+
+        .plugin-action {
+            margin-top: .6rem;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="cloud">
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title" id="categories">
+                </ul>
+                <div class="layui-tab-content" id="plugins">
+                    <!--                    <div class="layui-tab-item layui-show">-->
+                    <!--                        <ul class="icons layui-row" id="plugins">-->
+                    <!--                        </ul>-->
+                    <!--                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-fixbar" id="back-to-top" style="visibility: hidden">
+    <button onclick="scrollTopSmooth()" type="button" class="layui-btn layui-btn-sm">
+        <i class="layui-icon layui-icon-up"></i>
+    </button>
+</div>
+<script type="text/html" id="categories_tpl">
+    <li class="layui-this">所有插件</li>
+    {{# layui.each(d, function(index, item){ }}
+    <li>{{item.title}}</li>
+    {{# }); }}
+</script>
+<script id="plugin_tpl" type="text/html">
+    <div class="layui-tab-item layui-show">
+        <ul class="icons layui-row">
+            {{# layui.each(d.plugins, function(index, item){ }}
+            <li class='layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 plugin-item'>
+                <div class="plugin-main">
+                    <img onclick="pluginInfo('{{item.id}}')" class="plugin-logo" src="{{item.logo}}" alt="">
+                    <div class="plugin-content">
+                        <p>{{ item.title }}</p>
+                        <p class="layui-badge layui-bg-black">{{item.user.nickname}}</p>
+                        <p class="layui-badge layui-bg-black">{{item.category.title}}</p>
+                        {{# if(item.current_version===item.version){ }}
+                        <div>
+                            <span class="layui-badge layui-bg-black">{{item.version}}</span>
+                        </div>
+                        {{# }else{ }}
+                        <div>
+                            {{# if(item.current_version){ }}
+                            <span class="layui-badge layui-bg-black">{{item.current_version}}</span>
+                            <span class="layui-badge">New {{item.version}}</span>
+                            {{# }else{ }}
+                            <span class="layui-badge layui-bg-black">{{item.version}}</span>
+                            {{# } }}
+                        </div>
+                        {{# } }}
+                        {{# if(item.tag){ }}
+                        <div>
+                            <p class="layui-badge layui-bg-green">{{item.tag}}</p>
+                        </div>
+                        {{# } }}
+                    </div>
+                </div>
+                <div class="plugin-action">
+                    {{# if(item.current_version===item.version){ }}
+                    <button type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">已安装
+                    </button>
+                    {{# }else{ }}
+
+                    {{# if(item.current_version){ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">更新
+                    </button>
+                    {{# }else{ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">安装
+                    </button>
+                    {{# } }}
+                    {{# } }}
+                </div>
+            </li>
+            {{# }); }}
+        </ul>
+    </div>
+    {{# layui.each(d.categories, function(index, category){ }}
+    <div class="layui-tab-item">
+        <ul class="icons layui-row">
+            {{# layui.each(d.plugins, function(index, item){ }}
+            {{# if(item.category_id===category.id){}}
+            <li class='layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 plugin-item'>
+                <div class="plugin-main">
+                    <img onclick="pluginInfo('{{item.id}}')" class="plugin-logo" src="{{item.logo}}" alt="">
+                    <div class="plugin-content">
+                        <p>{{ item.title }}</p>
+                        <p class="layui-badge layui-bg-black">{{item.user.nickname}}</p>
+                        <p class="layui-badge layui-bg-black">{{item.category.title}}</p>
+                        {{# if(item.current_version===item.version){ }}
+                        <div>
+                            <span class="layui-badge layui-bg-black">{{item.version}}</span>
+                        </div>
+                        {{# }else{ }}
+                        <div>
+                            {{# if(item.current_version){ }}
+                            <span class="layui-badge layui-bg-black">{{item.current_version}}</span>
+                            <span class="layui-badge">New {{item.version}}</span>
+                            {{# }else{ }}
+                            <span class="layui-badge layui-bg-black">{{item.version}}</span>
+                            {{# } }}
+                        </div>
+                        {{# } }}
+                        {{# if(item.tag){ }}
+                        <div>
+                            <p class="layui-badge layui-bg-green">{{item.tag}}</p>
+                        </div>
+                        {{# } }}
+                    </div>
+                </div>
+                <div class="plugin-action">
+                    {{# if(item.current_version===item.version){ }}
+                    <button type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">已安装
+                    </button>
+                    {{# }else{ }}
+
+                    {{# if(item.current_version){ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">更新
+                    </button>
+                    {{# }else{ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">安装
+                    </button>
+                    {{# } }}
+                    {{# } }}
+                </div>
+            </li>
+            {{# } }}
+            {{# }); }}
+        </ul>
+    </div>
+    {{# }); }}
+</script>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/common.js" charset="utf-8"></script>
+<script src="../js/api.js" charset="utf-8"></script>
+<script>
+
+    function pluginInfo(id) {
+        const index = layer.open({
+            title: '插件详情',
+            type: 2,
+            shade: 0.2,
+            maxmin: true,
+            shadeClose: true,
+            area: ['100%', '100%'],
+            content: '../page/store/info.html?id=' + id,
+        });
+        $(window).on("resize", function () {
+            layer.full(index);
+        });
+    }
+
+    function pluginInstall(id) {
+        const index = layer.open({
+            title: '插件安装',
+            type: 2,
+            shade: 0.2,
+            maxmin: true,
+            shadeClose: true,
+            area: ['100%', '100%'],
+            content: '../page/store/install.html?id=' + id,
+        });
+        $(window).on("resize", function () {
+            layer.full(index);
+        });
+    }
+
+    layui.use(['form'], function () {
+        const layer = layui.layer,
+            laytpl = layui.laytpl,
+            $ = layui.$,
+            form = layui.form;
+        let tasks = []
+        tasks.push(cloud_plugins_get())
+        tasks.push(cloud_categories_get())
+        Promise.all(tasks).then(values => {
+
+            let getTpl = document.getElementById('plugin_tpl').innerHTML,
+                view = document.getElementById('plugins');
+            let getTpl2 = document.getElementById('categories_tpl').innerHTML,
+                view2 = document.getElementById('categories');
+            const data = {
+                plugins: values[0].data.items,
+                categories: values[1].data.items,
+            }
+            laytpl(getTpl).render(data, function (html) {
+                view.innerHTML = html;
+            });
+            laytpl(getTpl2).render(data.categories, function (html) {
+                view2.innerHTML = html;
+            });
+        })
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>插件详情</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+
+        .logo {
+            display: block;
+            width: 96px;
+            height: 96px;
+        }
+
+        .title {
+            margin: 1rem 0;
+        }
+
+        .main {
+            margin: 1rem 0;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        a.link {
+            font-size: .8rem;
+            font-weight: normal;
+            color: #E46AA3;
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            text-decoration: none;
+            vertical-align: top;
+            outline: 0;
+        }
+
+        a.link::before {
+            position: absolute;
+            top: auto;
+            bottom: 1px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ff4081;
+            -webkit-transform: scaleX(0);
+            transform: scaleX(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transition: all .2s;
+            transition: all .2s;
+            content: ' ';
+        }
+
+        a.link:hover::before {
+            -webkit-transform: scaleX(1);
+            transform: scaleX(1);
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form" lay-filter="plugin-info">
+    <div class="layui-card">
+        <div class="layui-card-body" id="plugin-info">
+        </div>
+    </div>
+</div>
+<script id="plugin_tpl" type="text/html">
+    <img class="logo" onerror="this.src='/static/images/plugin_default.jpg'" src="{{d.logo}}" alt="">
+    <div class="title">
+        {{d.title}}
+        <a class="link" target="_blank" href="{{d.link}}">获取更多帮助</a>
+    </div>
+    <div class="main">
+        <div class="author">
+            作者：<span class="layui-badge layui-bg-black">{{d.user.nickname}}</span>
+        </div>
+        {{# if(d.category.title){ }}
+        <div>
+            分类：<span class="layui-badge layui-bg-black">{{d.category.title}}</span>
+        </div>
+        {{# } }}
+        <div>
+            包名：<span class="layui-badge layui-bg-black">{{d.class}}</span>
+        </div>
+        <div>
+            版本号：<span class="layui-badge layui-bg-black">{{d.version}}</span>
+        </div>
+        <div>
+            当前版本：
+            {{# if(d.current_version){ }}
+                <span class="layui-badge layui-bg-black">{{d.current_version}}</span>
+            {{# }else{ }}
+                <span class="layui-badge">未安装</span>
+            {{# } }}
+        </div>
+        {{# if(d.tag){ }}
+        <div class="tag">
+            tag：<span class="layui-badge layui-bg-black">{{d.tag}}</span>
+        </div>
+        {{# } }}
+        {{# if(d.update_time){ }}
+        <div class="tag">
+            最后更新时间：<span class="layui-badge layui-bg-black">{{d.update_time}}</span>
+        </div>
+        {{# } }}
+    </div>
+    <div class="footer">
+
+        {{# if(d.desc){ }}
+        <blockquote class="layui-elem-quote desc">
+            {{d.desc}}
+        </blockquote>
+        {{# } }}
+        {{# if(d.help){ }}
+        <blockquote class="layui-elem-quote help">
+            {{d.help}}
+        </blockquote>
+        {{# } }}
+        {{# if(d.news){ }}
+        <blockquote class="layui-elem-quote news">
+            {{d.news}}
+        </blockquote>
+        {{# } }}
+    </div>
+    <button onclick="pluginInstall('{{d.id}}')" type="button" class="layui-btn layui-btn-fluid">立刻安装</button>
+</script>
+<script src="../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../../js/api.js" charset="utf-8"></script>
+<script src="../../js/common.js" charset="utf-8"></script>
+<script>
+
+    function pluginInstall(id) {
+        var index = layer.open({
+            title: '插件安装',
+            type: 2,
+            shade: 0.2,
+            maxmin: true,
+            shadeClose: true,
+            area: ['100%', '100%'],
+            content: './install.html?id=' + id,
+        });
+        $(window).on("resize", function () {
+            layer.full(index);
+        });
+    }
+
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laytpl = layui.laytpl,
+            $ = layui.$;
+        layer.load(1)
+        cloud_plugin_get(getQueryString('id')).then(res => {
+            var getTpl = document.getElementById('plugin_tpl').innerHTML,
+                view = document.getElementById('plugin-info');
+            laytpl(getTpl).render(res.data, function (html) {
+                view.innerHTML = html;
+                form.render();
+            });
+        }).finally(() => layer.closeAll())
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            layer.load(1)
+            try {
+                data.field.config = JSON.parse(data.field.config)
+            } catch (e) {
+                $message.error('插件配置不是合法的JSON数据格式，请重试');
+                layer.closeAll('loading')
+                return false
+            }
+            plugin_create(data.field).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功', {icon: 1});
+                }
+            }).finally(() => {
+                layer.closeAll('loading')
+            })
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

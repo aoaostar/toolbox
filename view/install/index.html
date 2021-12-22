@@ -1,0 +1,331 @@
+<html data-theme="light">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>安装向导 - 傲星工具箱</title>
+    <link rel="icon" href="/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.5/dist/full.css" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css"/>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/static/http.js?v={:get_version()}"></script>
+    <script src="/static/common.js?v={:get_version()}"></script>
+    <script src="/static/api.js?v={:get_version()}"></script>
+    <link rel="stylesheet" href="/static/style.css?v={:get_version()}">
+    <style>
+        body {
+            background-image: url("static/images/install_background.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.67);
+            overflow: hidden;
+            animation: panel 1s ease-in-out;
+        }
+
+        @keyframes panel {
+            0% {
+                -webkit-animation-timing-function: ease-in;
+                animation-timing-function: ease-in;
+                opacity: 0;
+                -webkit-transform: translate(-50%, -50%) perspective(400px) rotateX(90deg);
+                transform: translate(-50%, -50%) perspective(400px) rotateX(90deg)
+            }
+
+            40% {
+                -webkit-animation-timing-function: ease-in;
+                animation-timing-function: ease-in;
+                -webkit-transform: translate(-50%, -50%) perspective(400px) rotateX(-20deg);
+                transform: translate(-50%, -50%) perspective(400px) rotateX(-20deg)
+            }
+
+            60% {
+                opacity: 1;
+                -webkit-transform: translate(-50%, -50%) perspective(400px) rotateX(10deg);
+                transform: translate(-50%, -50%) perspective(400px) rotateX(10deg)
+            }
+
+            80% {
+                -webkit-transform: translate(-50%, -50%) perspective(400px) rotateX(-5deg);
+                transform: translate(-50%, -50%) perspective(400px) rotateX(-5deg)
+            }
+
+            to {
+                -webkit-transform: translate(-50%, -50%) perspective(400px);
+                transform: translate(-50%, -50%) perspective(400px)
+            }
+        }
+
+        .table td, .table th {
+            background-color: transparent !important;
+        }
+
+        .v-enter-active {
+            transition: all .8s ease;
+        }
+
+        .v-leave-active {
+            transition: all .8s ease;
+        }
+
+        .v-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .v-leave-to {
+            transform: translateX(-100%);
+            opacity: 0;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div class="container mx-auto" id="app">
+    <div class="panel w-11/12 sm:w-3/4 md:w-2/3 2xl:w-1/2">
+        <div class="card text-center ">
+            <div class="card-body pt-8 pb-0">
+                <ul class="steps steps-horizontal">
+                    <li class="step step-accent">开始安装</li>
+                    <li class="step" :class="{'step-accent':step>0}">检测安装环境</li>
+                    <li class="step" :class="{'step-accent':step>1}">配置数据库</li>
+                    <li class="step" :class="{'step-accent':step>2}">配置Oauth信息</li>
+                    <li class="step" :class="{'step-accent':step>3}">完成安装</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card text-center shadow-2xl main">
+            <transition>
+                <div class="card-body" v-show="step===0">
+                    <h2 class="card-title">欢迎安装傲星工具箱</h2>
+                    <p>Welcome to install AOAOSTAR Toolbox.</p>
+                    <div class="justify-center card-actions">
+                        <button class="btn btn-outline btn-accent" @click="step++">开始安装吧~</button>
+                    </div>
+                </div>
+            </transition>
+            <transition>
+                <div class="card-body" v-show="step===1">
+                    <h2 class="card-title">检测安装环境</h2>
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                            <tr>
+                                <th>Requirement</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(item,index) in requirements" :key="index">
+                                <td>{{index}}</td>
+                                <td>
+                                    <div class="badge badge-success" v-if="item">
+                                        Yes
+                                    </div>
+                                    <div class="badge badge-error" v-else>
+                                        No
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="justify-center card-actions">
+                        <button class="btn btn-outline btn-accent" @click="step++">下一步</button>
+                    </div>
+                </div>
+            </transition>
+            <transition>
+                <div class="card-body" v-show="step===2">
+                    <h2 class="card-title">配置数据库信息</h2>
+                    <div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Host</span>
+                            </label>
+                            <input type="text" v-model="database.hostname" placeholder="请输入数据库地址"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Database</span>
+                            </label>
+                            <input type="text" v-model="database.database" placeholder="请输入数据库表名"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Username</span>
+                            </label>
+                            <input type="text" v-model="database.username" placeholder="请输入数据库用户名"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Password</span>
+                            </label>
+                            <input type="text" v-model="database.password" placeholder="请输入数据库密码"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">Port</span>
+                            </label>
+                            <input type="text" v-model="database.hostport" placeholder="请输入数据库端口"
+                                   class="input input-accent input-bordered">
+                        </div>
+                    </div>
+                    <div class="justify-center card-actions">
+                        <button class="btn btn-outline btn-accent" @click="step++">下一步</button>
+                    </div>
+                </div>
+            </transition>
+            <transition>
+                <div class="card-body" v-show="step===3">
+                    <h2 class="card-title">配置Oauth信息</h2>
+                    <div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">回调地址</span>
+                            </label>
+                            <input type="text" v-model="oauth.callback_url" placeholder="请输入回调地址"
+                                   class="input input-accent input-bordered" readonly>
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">用户名</span>
+                            </label>
+                            <input type="text" v-model="oauth.username" placeholder="请输入用户名"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">client_id</span>
+                            </label>
+                            <input type="text" v-model="oauth.client_id" placeholder="请输入client_id"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">client_secret</span>
+                            </label>
+                            <input type="text" v-model="oauth.client_secret" placeholder="请输入client_secret"
+                                   class="input input-accent input-bordered">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">后台路径</span>
+                            </label>
+                            <input type="text" v-model="oauth.auth_path" placeholder="请输入后台路径"
+                                   class="input input-accent input-bordered">
+                        </div>
+                    </div>
+                    <div class="justify-center card-actions">
+                        <button class="btn btn-outline btn-accent" @click="step++">下一步</button>
+                    </div>
+                </div>
+            </transition>
+            <transition>
+                <div class="card-body" v-show="step===4">
+                    <h2 class="card-title">完成安装</h2>
+                    <p>恭喜你，已经成功安装了傲星工具箱，你好棒棒哦~</p>
+                    <div class="justify-center card-actions">
+                        <button class="btn btn-outline btn-accent" @click="redirect('/')">完成安装~</button>
+                        <button class="btn btn-outline btn-accent" @click="open('http://github.com/aoaostar/toolbox')">
+                            去给作者个star~
+                        </button>
+                    </div>
+                </div>
+            </transition>
+        </div>
+    </div>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            step: 0,
+            status: {},
+            requirements: JSON.parse(`{:json_encode($requirements)}`),
+            database: {
+                hostname: '127.0.0.1',
+                hostport: '3306',
+                database: 'toolbox',
+                username: '',
+                password: '',
+            },
+            oauth: {
+                callback_url: "{:url('Auth/callback',[],false,true)}",
+                username: '',
+                client_id: '',
+                client_secret: '',
+                auth_path: 'admin',
+            },
+        },
+        watch: {
+            step(newVal, oldVal) {
+                let loading = null
+                if (this.status[newVal]) {
+                    return
+                }
+                this.status[newVal] = true
+                switch (newVal) {
+                    case 2:
+                        let values = Object.values(this.requirements);
+                        if (values.includes(false)) {
+                            this.step = oldVal
+                            $message.error('环境不通过')
+                            return
+                        }
+                        break
+                    case 3:
+                        loading = Swal.fire({
+                            title: '正在完成数据库安装',
+                            allowOutsideClick: false,
+
+                        });
+                        Swal.showLoading();
+                        install_api.database(this.database).then(res => {
+                            if (res.status === 'ok') {
+                                install_api.init_data().then(res2 => {
+                                    if (res2.status !== 'ok') {
+                                        this.step = oldVal
+                                        this.status[newVal] = false
+                                    }
+                                })
+                            } else {
+                                this.step = oldVal
+                                this.status[newVal] = false
+                            }
+                        }).finally(() => loading.close())
+                        break
+                    case 4:
+                        loading = Swal.fire({
+                            title: '正在完成OAUTH信息配置',
+                            allowOutsideClick: false,
+
+                        });
+                        Swal.showLoading();
+                        install_api.oauth(this.oauth).then(res => {
+                            if (res.status !== 'ok') {
+                                this.step = oldVal
+                                this.status[newVal] = false
+                            }
+                        }).finally(() => loading.close())
+                        break
+                }
+            }
+        },
+        methods: {}
+    })
+</script>
+</body>
+</html>

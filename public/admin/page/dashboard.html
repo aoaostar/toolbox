@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>主页</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .top-panel {
+            border: 1px solid #eceff9;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .top-panel > .layui-card-body {
+            height: 60px;
+        }
+
+        .top-panel-number {
+            line-height: 60px;
+            font-size: 30px;
+            border-right: 1px solid #eceff9;
+        }
+
+        .top-panel-tips {
+            line-height: 30px;
+            font-size: 12px
+        }
+
+        .layuimini-notice:hover {
+            background: #f6f6f6;
+        }
+
+        .layuimini-notice {
+            padding: 7px 16px;
+            clear: both;
+            font-size: 12px !important;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .layuimini-notice-title, .layuimini-notice-label {
+            padding-right: 70px !important;
+            text-overflow: ellipsis !important;
+            overflow: hidden !important;
+            white-space: nowrap !important;
+        }
+
+        .layuimini-notice-title {
+            line-height: 28px;
+            font-size: 14px;
+        }
+
+        .layuimini-notice-extra {
+            position: absolute;
+            top: 50%;
+            margin-top: -8px;
+            right: 16px;
+            display: inline-block;
+            height: 16px;
+            color: #999;
+        }
+
+    </style>
+</head>
+<body>
+<div class="layuimini-main">
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">总请求次数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5 statistics_count">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            0
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲0.00</a><br>
+                            比七日 <a style="color: #bd3004">▼0.00</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">今日最高请求次数</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5 statistics_count">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            0
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲0.00</a><br>
+                            比七日 <a style="color: #bd3004">▼0.00</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">今日活跃用户</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5 statistics_count">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            0
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲0.00</a><br>
+                            比七日 <a style="color: #bd3004">▼0.00</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+
+            <div class="layui-card top-panel">
+                <div class="layui-card-header">今日新增用户</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space5 statistics_count">
+                        <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+                            0
+                        </div>
+                        <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+                            比昨天 <a style="color: #1aa094">▲0.00</a><br>
+                            比七日 <a style="color: #bd3004">▼0.00</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md9">
+            <div id="echarts-records" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md3">
+            <div id="echarts-pies" style="background-color:#ffffff;min-height:400px;padding: 10px"></div>
+        </div>
+    </div>
+
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-xs12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header"><i class="layui-icon layui-icon-about"></i>&nbsp;&nbsp;版本信息</div>
+                <div class="layui-card-body layui-text" id="system_info">
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header"><i class="layui-icon layui-icon-note"></i>&nbsp;&nbsp;Releases</div>
+                <div class="layui-card-body layui-text" id="releases">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script type="text/html" id="system_info_tpl">
+    <table class="layui-table">
+        <colgroup>
+            <col width="100">
+            <col>
+        </colgroup>
+        <tbody>
+        <tr>
+            <td>程序名称</td>
+            <td>
+                {{d.app_name}}
+            </td>
+        </tr>
+        <tr>
+            <td>作者</td>
+            <td>
+                {{d.author}}
+            </td>
+        </tr>
+        <tr>
+            <td>当前版本</td>
+            <td>{{d.version}}</td>
+        </tr>
+        <tr>
+            <td>演示地址</td>
+            <td>
+                傲星工具箱：<a href="http://tool.aoaostar.com" target="_blank">点击查看</a><br>
+            </td>
+        </tr>
+        <tr>
+            <td>Github</td>
+            <td style="padding-bottom: 0;">
+                <div class="layui-btn-container">
+                    <iframe src="https://ghbtns.com/github-btn.html?user=aoaostar&repo=toolbox&type=star&count=true"
+                            frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+                    <iframe src="https://ghbtns.com/github-btn.html?user=aoaostar&repo=toolbox&type=fork&count=true"
+                            frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>框架版本</td>
+            <td>{{d.framework_version}}</td>
+        </tr>
+        <tr>
+            <td>PHP版本</td>
+            <td>{{d.php_version}}</td>
+        </tr>
+        <tr>
+            <td>数据库版本</td>
+            <td>{{d.mysql_version}}</td>
+        </tr>
+        <tr>
+            <td>操作系统</td>
+            <td>{{d.os}}</td>
+        </tr>
+        <tr>
+            <td>服务器IP</td>
+            <td>{{d.host}}</td>
+        </tr>
+        <tr>
+            <td>服务器时间</td>
+            <td>{{d.date}}</td>
+        </tr>
+        </tbody>
+    </table>
+</script>
+<script type="text/html" id="releases_tpl">
+    {{# for(const item of d){ }}
+    <div class="layuimini-notice">
+        <div class="layuimini-notice-title">{{item.version}}</div>
+        <div class="layuimini-notice-extra">{{item.create_time}}</div>
+        <div class="layuimini-notice-content layui-hide">
+            {{item.message}}
+        </div>
+    </div>
+    {{# } }}
+</script>
+<script type="text/html" id="request_count_info_tpl">
+    <div class="layui-col-xs9 layui-col-md9 top-panel-number">
+        {{d.request_count}}
+    </div>
+    <div class="layui-col-xs3 layui-col-md3 top-panel-tips">
+        {{# if(d.compare_yesterday>0){ }}
+        比昨天 <a style="color: #1aa094">▲{{Math.abs(d.compare_yesterday).toFixed(2)}}</a><br>
+        {{# }else{ }}
+        比昨天 <a style="color: #bd3004">▼{{Math.abs(d.compare_yesterday).toFixed(2)}}</a>
+        {{# } }}
+        {{# if(d.compare_average>0){ }}
+        比七日 <a style="color: #1aa094">▲{{Math.abs(d.compare_average).toFixed(2)}}</a><br>
+        {{# }else{ }}
+        比七日 <a style="color: #bd3004">▼{{Math.abs(d.compare_average).toFixed(2)}}</a>
+        {{# } }}
+    </div>
+</script>
+<!--</div>-->
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script src="../js/common.js" charset="utf-8"></script>
+<script src="../js/api.js" charset="utf-8"></script>
+<script>
+    layui.use(['layer', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            laytpl = layui.laytpl,
+            echarts = layui.echarts;
+
+        /**
+         * 报表功能
+         */
+        const echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+
+        let optionRecords = {
+            title: {
+                text: '数据统计-报表图'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: ['当天总请求次数', '当天最高请求次数', '当天活跃用户', '当天新增用户']
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                    data: []
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '当天总请求次数',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name: '当天最高请求次数',
+                    type: 'line',
+                    areaStyle: {},
+                    data: [220, 182, 191, 234, 290, 330, 310]
+                },
+                {
+                    name: '当天活跃用户',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [150, 232, 201, 154, 190, 330, 410]
+                },
+                {
+                    name: '当天新增用户',
+                    type: 'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data: [320, 332, 301, 334, 390, 330, 320]
+                },
+            ]
+        };
+
+        /**
+         * 玫瑰图表
+         */
+        const echartsPies = echarts.init(document.getElementById('echarts-pies'), 'walden');
+        let optionPies = {
+            title: {
+                text: '今日请求-玫瑰图',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: []
+            },
+            series: [
+                {
+                    name: '请求占比',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '60%'],
+                    roseType: 'radius',
+                    data: [],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+
+        const getTpl = document.getElementById('request_count_info_tpl').innerHTML
+        const tpl = laytpl(getTpl);
+        const views = document.getElementsByClassName('statistics_count');
+
+        const format_request_count_info_data = (obj) => {
+            let data = {
+                request_count: 0,
+                compare_yesterday: 0,
+                compare_average: 0,
+            }
+            const keys = Object.keys(obj);
+            let sum = 0;
+            let index = 0;
+            let yesterday_count = 0
+            for (const objKey in obj) {
+                sum += obj[objKey];
+                if (index === keys.length - 2) {
+                    yesterday_count = obj[objKey]
+                }
+                if (index === keys.length - 1) {
+                    data.request_count = obj[objKey]
+                }
+                index++
+            }
+            const avg = sum / keys.length;
+            if (yesterday_count !== 0) {
+                data.compare_yesterday = (data.request_count - yesterday_count) / yesterday_count;
+            } else {
+                data.compare_yesterday = 0
+            }
+            if (avg !== 0) {
+                data.compare_average = (data.request_count - avg) / avg;
+            } else {
+                data.compare_average = 0
+            }
+            return data
+        }
+        let tasks = [];
+        tasks.push(plugin_total_request_count().then(res => {
+            const data = format_request_count_info_data(res.data)
+            tpl.render(data, function (html) {
+                views[0].innerHTML = html;
+            });
+            optionRecords.series[0].data = Object.values(res.data);
+        }));
+
+        tasks.push(plugin_max_request_count().then(res => {
+            const data = format_request_count_info_data(res.data)
+            tpl.render(data, function (html) {
+                views[1].innerHTML = html;
+            });
+            optionRecords.series[1].data = Object.values(res.data);
+        }));
+        tasks.push(user_active_count().then(res => {
+            const data = format_request_count_info_data(res.data)
+            tpl.render(data, function (html) {
+                views[2].innerHTML = html;
+            });
+            optionRecords.series[2].data = Object.values(res.data);
+        }));
+        tasks.push(user_increase_count().then(res => {
+            const data = format_request_count_info_data(res.data)
+            tpl.render(data, function (html) {
+                views[3].innerHTML = html;
+            });
+            optionRecords.series[3].data = Object.values(res.data);
+        }));
+        tasks.push(plugin_request_count().then(res => {
+            const arr = res.data
+            let legend = []
+            let series = []
+            let other_request_count = 0
+            for (let i = 0; i < arr.length; i++) {
+                if (i < 5) {
+                    legend.push(arr[i].plugin.title)
+                    series.push({
+                        value: arr[i].request_count,
+                        name: arr[i].plugin.title
+                    })
+                } else {
+                    other_request_count += arr[i].request_count
+                }
+            }
+            legend.push('其他')
+            series.push({
+                value: other_request_count,
+                name: '其他'
+            })
+            optionPies.legend.data = legend
+            optionPies.series[0].data = series
+        }))
+        for (let i = 6; i >= 0; i--) {
+            let now = new Date()
+            now.setDate(now.getDate() - i)
+            const date = now.getMonth() + 1 + '-' + now.getDate()
+            optionRecords.xAxis[0].data.push(date)
+        }
+
+        system_info_get().then(res => {
+            const view = document.getElementById('system_info');
+            const getTpl = document.getElementById('system_info_tpl').innerHTML
+            laytpl(getTpl).render(res.data, function (html) {
+                view.innerHTML = html;
+            });
+        })
+        cloud_releases_get().then(res => {
+            const view = document.getElementById('releases');
+            const getTpl = document.getElementById('releases_tpl').innerHTML
+            laytpl(getTpl).render(res.data.items, function (html) {
+                view.innerHTML = html;
+            });
+        })
+        Promise.all(tasks).finally(() => {
+            echartsRecords.setOption(optionRecords);
+            echartsPies.setOption(optionPies);
+        })
+
+        // echarts 窗口缩放自适应
+        window.onresize = function () {
+            echartsRecords.resize();
+        }
+
+        /**
+         * 查看公告信息
+         **/
+        $('body').on('click', '.layuimini-notice', function () {
+            var title = $(this).children('.layuimini-notice-title').text(),
+                noticeTime = $(this).children('.layuimini-notice-extra').text(),
+                content = $(this).children('.layuimini-notice-content').html();
+            let html = `<div>
+            <p>版本号：${title}</p>
+            <p>发布时间：${noticeTime}</p>
+            <p>${content}</p>
+</div>`
+            layer.open({
+                title: '版本详情',
+                skin: 'layui-layer-lan',
+                closeBtn: 0,
+                anim: 4,
+                content: html
+            });
+        });
+    });
+</script>
+</body>
+</html>

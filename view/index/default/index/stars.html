@@ -1,0 +1,119 @@
+{extend name="layout/layout" /}
+﻿
+{block name="title"}我的收藏 - {$app.title}{/block}
+{block name="main"}
+<div class="container mx-auto" id="app">
+
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <div class="tabs ">
+                <a @click="categoryId=0" class="btn btn-ghost btn-sm rounded-btn tab"
+                   :class="{'tab-active':!categoryId}">所有</a>
+                {foreach $categories as $v}
+                <a @click="categoryId={$v.id}" class="btn btn-ghost btn-sm rounded-btn tab"
+                   :class="{'tab-active':categoryId=={$v.id}}">{$v.title}</a>
+                {/foreach}
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4">
+        <div class="card text-center shadow-lg"
+             v-for="item,index in plugins" :key="index">
+            <div class="card-body">
+                <div class=" flex flex-row">
+                    <div class="avatar w-1/3">
+                        <div class="rounded-btn w-24 h-24">
+                            <img :src="item.logo" alt="">
+                        </div>
+                    </div>
+                    <div class="ml-4 w-2/3 flex justify-center flex-col">
+                        <h2 class="card-title truncate">{{item.title}}</h2>
+                        <div class="flex">
+                            {if(is_login())}
+                            <button v-if="user.stars.indexOf(item.alias)===-1" class="btn btn-ghost btn-sm rounded-btn"
+                                    @click="star(item.alias)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     class="inline-block w-5 mr-2 stroke-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                Star
+                            </button>
+                            <button v-else class="btn btn-ghost btn-sm rounded-btn" @click="star(item.alias,'remove')">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     class="inline-block w-5 mr-2 stroke-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          fill="#d63031"
+                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                UnStar
+                            </button>
+                            {else}
+                            <a class="btn btn-ghost btn-sm rounded-btn"
+                               href="/auth/login">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     class="inline-block w-5 mr-2 stroke-current">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                                Star
+                            </a>
+                            {/if}
+                            <button @click="categoryId=item.id" class="btn btn-ghost btn-sm rounded-btn"
+                                    v-if="item.category!==null">
+                                [{{item.category.title}}]
+                            </button>
+                            <button class="btn btn-ghost btn-sm rounded-btn" v-else>
+                                [默认类]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p v-if="item.desc" class="truncate">{{item.desc}}</p>
+                    <p v-else class="truncate">暂无描述</p>
+                    <div class="justify-center card-actions">
+                        <a class="btn btn-primary btn-block " target="_blank" :href="'/'+item.alias">进入</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            categoryId: "{:request()->get('categoryId')}",
+            plugins: [],
+            user: JSON.parse('{if(is_login())}{$user|raw}{else}{literal}{}{/literal}{/if}'),
+        },
+        watch: {
+            categoryId(newVal) {
+                this.getPlugins(newVal)
+            }
+        },
+        created() {
+            this.getPlugins(this.categoryId)
+        },
+        methods: {
+            getPlugins(categoryId) {
+                return plugins_get(categoryId, 1).then(res => {
+                    if (res.status === 'ok') {
+                        this.plugins = res.data.items
+                    }
+                })
+            },
+            star(pluginAlias, action = 'add') {
+                return star(pluginAlias, action).then(res => {
+                    if (res.status === 'ok') {
+                        this.user.stars = res.data;
+                    }
+                })
+            }
+        },
+    })
+</script>
+{/block}

@@ -1,0 +1,53 @@
+{
+  "name": "aoaostar/toolbox",
+  "description": "AOAOSTAR TOOLBOX",
+  "type": "project",
+  "keywords": [
+    "aoaostar",
+    "toolbox"
+  ],
+  "homepage": "http://www.aoaostar.com/",
+  "license": "GPL-3.0-only",
+  "authors": [
+    {
+      "name": "Pluto",
+      "email": "i@aoaostar.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "topthink/framework": "^6.0.0",
+    "topthink/think-orm": "^2.0",
+    "topthink/think-view": "^1.0",
+    "topthink/think-migration": "^3.0",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-zip": "*",
+    "ext-pdo": "*",
+    "ext-iconv": "*"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "^4.2",
+    "topthink/think-trace": "^1.0",
+    "topthink/think-ide-helper": "^1.0",
+    "jaguarjack/migration-generator": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "app",
+      "plugin\\": "plugin"
+    },
+    "psr-0": {
+      "": "extend/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php think service:discover",
+      "@php think vendor:publish"
+    ]
+  }
+}

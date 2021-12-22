@@ -1,0 +1,6 @@
+/.idea
+/.vscode
+*.log
+.env
+*.lock
+public/test

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>系统配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form" lay-filter="system-info">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form">
+                <blockquote class="layui-elem-quote">系统配置</blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站标题:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="global.title" placeholder="请输入网站标题" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="网站标题不能为空">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站副标题:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="global.subtitle" placeholder="请输入网站副标题" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="网站副标题不能为空">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">keywords:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="global.keywords" placeholder="请输入keywords" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="keywords不能为空">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">description:</label>
+                    <div class="layui-input-block">
+                        <textarea name="global.description" placeholder="请输入description" class="layui-textarea"
+                                  lay-verify="required"
+                                  lay-reqtext="description不能为空"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">自定义底部代码:</label>
+                    <div class="layui-input-block">
+                        <textarea name="global.foot_code" placeholder="请输入自定义底部代码" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+                <blockquote class="layui-elem-quote">模板选择</blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">模板选择</label>
+                    <div class="layui-input-inline">
+                        <select name="global.template" lay-verify="required" id="template">
+                        </select>
+                    </div>
+                </div>
+                <blockquote class="layui-elem-quote">后台入口地址，如果你修改了后台文件目录的话请修改它，默认admin</blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">入口地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="oauth.admin_path" placeholder="请输入入口地址" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="入口地址不能为空">
+                    </div>
+                </div>
+                <blockquote class="layui-elem-quote">OAuth配置</blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Username:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="oauth.username" placeholder="请输入Username" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="username不能为空">
+                        <tip>进行 OAuth 认证的 用户名</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Client_Id:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="oauth.client_id" placeholder="请输入client_id" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="client_id不能为空">
+                        <tip>OAuth APP的 CLIENT_ID</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">Client_Secret:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="oauth.client_secret" placeholder="请输入client_secret"
+                               class="layui-input" lay-verify="required"
+                               lay-reqtext="client_secret不能为空">
+                        <tip>OAuth APP的 CLIENT_SECRET</tip>
+                    </div>
+                </div>
+                <blockquote class="layui-elem-quote">插件中心配置</blockquote>
+                <blockquote class="layui-elem-quote">默认下载源：https://github.com/{owner}/{repo}/raw/{branch}/{path}
+                </blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">下载源:</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="cloud.mirror" placeholder="请输入下载源" class="layui-input"
+                               lay-verify="required"
+                               lay-reqtext="下载源不能为空">
+                        <tip>下载源配置，变量参数：{owner}、{repo}、{branch}、{path}</tip>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn " lay-submit lay-filter="saveBtn">确认保存</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="template_tpl">
+    {{#for(const item of d){}}
+    <option value="{{item}}">{{item}}</option>
+    {{# }}}
+</script>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/common.js" charset="utf-8"></script>
+<script src="../js/api.js" charset="utf-8"></script>
+<script>
+
+    const init = () => {
+        layer.load(1)
+        let tasks = []
+        tasks.push(
+            system_get().then(res => {
+                if (res.status === 'ok') {
+                    let arr = {};
+                    const data = res.data;
+                    for (const k in data) {
+                        arr[data[k]['key']] = data[k]['value']
+                    }
+                    layui.form.val('system-info', arr)
+                }
+            }))
+        tasks.push(
+            templates_get().then(res => {
+                const getTpl = document.getElementById('template_tpl').innerHTML,
+                    view = document.getElementById('template');
+                layui.laytpl(getTpl).render(res.data, function (html) {
+                    console.log(html)
+                    view.innerHTML = html;
+                    layui.form.render();
+                });
+            })
+        )
+
+        Promise.all(tasks).finally(() => {
+            layer.closeAll('loading')
+        })
+    }
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            laytpl = layui.laytpl,
+            $ = layui.$;
+        init();
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            layer.load(1)
+            let arr = []
+            for (const k in data.field) {
+                arr.push({
+                    'key': k,
+                    'value': data.field[k],
+                })
+            }
+            system_update(arr).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功');
+                }
+            }).finally(() => {
+                layer.closeAll('loading')
+            })
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
