@@ -18,7 +18,7 @@
     </div>
     <div class="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4">
         <div class="card text-center shadow-lg"
-             v-for="item,index in plugins" :key="index">
+             v-for="item,index in currentPlugins" :key="index">
             <div class="card-body">
                 <div class=" flex flex-row">
                     <div class="avatar w-1/3">
@@ -88,11 +88,25 @@
         data: {
             categoryId: "{:request()->get('categoryId')}",
             plugins: [],
+            currentPlugins: [],
             user: JSON.parse('{if(is_login())}{$user|raw}{else}{literal}{}{/literal}{/if}'),
         },
         watch: {
             categoryId(newVal) {
-                this.getPlugins(newVal)
+                if (!newVal) {
+                    this.currentPlugins = this.plugins;
+                    return
+                }
+                let arr = []
+                for (plugin of this.plugins) {
+                    if (plugin.category_id === newVal) {
+                        arr.push(plugin)
+                    }
+                }
+                this.currentPlugins = arr
+            },
+            plugins(newVal){
+                this.currentPlugins = newVal
             }
         },
         created() {
