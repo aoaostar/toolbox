@@ -94,6 +94,17 @@ const scrollTopSmooth = () => {
         window.scrollTo(0, val);
     });
 }
+const copy = (text) => {
+    let oInput = document.createElement('textarea');
+    oInput.value = text;
+    document.body.appendChild(oInput);
+    oInput.select(); // 选择对象
+    document.execCommand("Copy"); // 执行浏览器复制命令
+    oInput.className = 'oInput';
+    oInput.style.display = 'none';
+    oInput.remove();
+}
+
 
 const $message = {
     success: (message) => {
@@ -129,8 +140,8 @@ const title = `
 `;
 if (window.console && window.console.log) {
     console.log(title)
-    console.log("%c 傲星工具箱 %c https://www.aoaostar.com ","color: #fff; margin: 1em 0; padding: 5px 0; background: #28b9be;","margin: 1em 0; padding: 5px 0; background: #efefef;");
-    console.log("%c 作者：Pluto %c i@aoaostar.com ","color: #fff; margin: 1em 0; padding: 5px 0; background: #ffa0a0;","margin: 1em 0; padding: 5px 0; background: #efefef;");
-    console.log("%c Github： %c https://github.com/aoaostar ","color: #fff; margin: 1em 0; padding: 5px 0; background: #535f6a;","margin: 1em 0; padding: 5px 0; background: #efefef;");
-    console.log("%c Telegram： %c https://t.me/aoaostar ","color: #fff; margin: 1em 0; padding: 5px 0; background: #6190e8;","margin: 1em 0; padding: 5px 0; background: #efefef;");
+    console.log("%c 傲星工具箱 %c https://www.aoaostar.com ", "color: #fff; margin: 1em 0; padding: 5px 0; background: #28b9be;", "margin: 1em 0; padding: 5px 0; background: #efefef;");
+    console.log("%c 作者：Pluto %c i@aoaostar.com ", "color: #fff; margin: 1em 0; padding: 5px 0; background: #ffa0a0;", "margin: 1em 0; padding: 5px 0; background: #efefef;");
+    console.log("%c Github： %c https://github.com/aoaostar ", "color: #fff; margin: 1em 0; padding: 5px 0; background: #535f6a;", "margin: 1em 0; padding: 5px 0; background: #efefef;");
+    console.log("%c Telegram： %c https://t.me/aoaostar ", "color: #fff; margin: 1em 0; padding: 5px 0; background: #6190e8;", "margin: 1em 0; padding: 5px 0; background: #efefef;");
 }

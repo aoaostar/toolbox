@@ -24,7 +24,7 @@ class PluginPackage extends Command
         $space = $input->getArgument('space');
         // 指令输出
         $rootPath = app()->getRootPath() . '/plugin/';
-        if (!is_dir($rootPath.$space)){
+        if (!is_dir($rootPath . $space)) {
             $output->writeln("该域不存在:[$space]");
             return;
         }
@@ -39,7 +39,7 @@ class PluginPackage extends Command
             if ($zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
 
                 $tree_relative = tree_relative($plugin);
-                $files = multi2one($tree_relative, '', DIRECTORY_SEPARATOR);
+                $files = multi2one($tree_relative, '', '/');
                 foreach ($files as $file) {
                     if ($file !== '.' && $file !== '..') {
                         $zip->addFile($plugin . '/' . $file, $space . '/' . basename($plugin) . '/' . $file);
