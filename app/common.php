@@ -205,9 +205,9 @@ function multi2one($data, $dir = '', $step = '')
     $list = [];
     foreach ($data as $k => $v) {
         if (is_array($v)) {
-            $list = array_merge($list, multi2one($v, $k, $step));
+            $list = array_merge($list, multi2one($v, $dir . $step . $k, $step));
         } else {
-            $list[] = $dir . $v;
+            $list[] = ltrim($dir . $step . $v, '\\/');
         }
     }
     return $list;
