@@ -287,12 +287,7 @@
                         }
                         break
                     case 3:
-                        loading = Swal.fire({
-                            title: '正在完成数据库安装',
-                            allowOutsideClick: false,
-
-                        });
-                        Swal.showLoading();
+                        loading = $message.loading('正在完成数据库安装')
                         install_api.database(this.database).then(res => {
                             if (res.status === 'ok') {
                                 install_api.init_data().then(res2 => {
@@ -308,12 +303,7 @@
                         }).finally(() => loading.close())
                         break
                     case 4:
-                        loading = Swal.fire({
-                            title: '正在完成OAUTH信息配置',
-                            allowOutsideClick: false,
-
-                        });
-                        Swal.showLoading();
+                        loading = $message.loading('正在完成OAUTH信息配置')
                         install_api.oauth(this.oauth).then(res => {
                             if (res.status !== 'ok') {
                                 this.step = oldVal

@@ -52,11 +52,11 @@ const $message = {
 const dateFormat = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
     const config = {
         YYYY: date.getFullYear(),
-        MM: date.getMonth() + 1,//getMonth() 方法根据本地时间返回指定日期的月份（从 0 到 11）
-        DD: date.getDate(),
-        HH: date.getHours(),
-        mm: date.getMinutes(),
-        ss: date.getSeconds(),
+        MM: date.getMonth() < 9 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1,
+        DD: date.getDate() < 10 ? '0' + date.getDate() : date.getDate(),
+        HH: date.getHours() < 10 ? '0' + date.getHours() : date.getHours(),
+        mm: date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes(),
+        ss: date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds(),
     }
     for (const key in config) {
         format = format.replace(key, config[key])
@@ -64,13 +64,12 @@ const dateFormat = (date, format = 'YYYY-MM-DD HH:mm:ss') => {
     return format
 }
 
-
 window.onscroll = function () {
     var scrollTop = document.documentElement.scrollTop ?
         document.documentElement.scrollTop :
         document.body.scrollTop;
     let dom = document.getElementById('back-to-top')
-    if (dom){
+    if (dom) {
         if (scrollTop > 200) {
             dom.style.visibility = "visible"
         } else {

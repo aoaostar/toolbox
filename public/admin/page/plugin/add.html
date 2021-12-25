@@ -129,7 +129,7 @@
         categories_get().then(res => {
             const getTpl = document.getElementById('categoies_tpl').innerHTML,
                 view = document.getElementById('categories');
-            laytpl(getTpl).render(res.data, function (html) {
+            laytpl(getTpl).render(res.data.items, function (html) {
                 view.innerHTML = html;
                 form.render();
             });

@@ -1,1 +1,40 @@
-{extend name="layout/layout" /}
+<html data-theme="light">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{block name="title"}标题{/block}</title>
+    <link rel="icon" href="/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.5/dist/full.css" rel="stylesheet" type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css"/>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/static/http.js?v={:get_version()}"></script>
+    <script src="/static/common.js?v={:get_version()}"></script>
+    <script src="/static/api.js?v={:get_version()}"></script>
+    <link rel="stylesheet" href="/static/style.css?v={:get_version()}">
+    {block name="head"}{/block}
+</head>
+<body>
+<div class="site-main">
+    {include file="layout/header" /}
+
+    <div class="container mx-auto my-4" >
+        <div class="card lg:card-side bordered shadow-lg">
+            <figure>
+                <img src="{$plugin.logo}">
+            </figure>
+            <div class="card-body">
+                <h2 class="card-title">{$plugin.title}</h2>
+                <p>{$plugin.desc}</p>
+            </div>
+        </div>
+    </div>
+    {block name="main"}主内容{/block}
+</div>
+<div class="site-footer">
+    {include file="layout/footer" /}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+</body>
+</html>

@@ -46,7 +46,6 @@
                                             <input type="text" name="title" placeholder="填写插件的标题"  lay-verify="required" lay-reqtext="插件标题不能为空" class="layui-input"
                                                    required/>
                                             <tip>填写插件的标题。</tip>
-
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
@@ -154,7 +153,7 @@
         categories_get().then(res => {
             var getTpl = document.getElementById('categoies_tpl').innerHTML,
                 view = document.getElementById('categories');
-            laytpl(getTpl).render(res.data, function (html) {
+            laytpl(getTpl).render(res.data.items, function (html) {
                 view.innerHTML = html;
             });
         })

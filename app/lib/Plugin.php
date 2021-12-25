@@ -113,12 +113,17 @@ class Plugin
                 $model->title = '插件' . $this->uniqid;
                 $model->alias = $this->uniqid;
                 $model->class = $this->pluginClass;
-                $model->logo = '/static/images/plugin_default.jpg';
+                $model->logo = '/static/images/plugin_default.png';
                 $model->desc = '暂无描述';
                 $model->version = 'v1.0';
                 $model->config = [];
                 $model->category_id = 0;
                 $model->request_count = 0;
+            }
+            if (is_file($this->pluginPath . '/logo.png')) {
+                $logoFilename = plugin_logo_path_get($this->pluginClass);
+                copy($this->pluginPath . '/logo.png', $logoFilename);
+                $model->logo = plugin_logo_relative_path_get($this->pluginClass);
             }
             $install->Install($model);
             //判断alias是否重复

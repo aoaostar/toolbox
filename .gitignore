@@ -4,3 +4,4 @@
 .env
 *.lock
 public/test
+*_test.php

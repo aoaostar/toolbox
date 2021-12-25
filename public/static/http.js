@@ -59,3 +59,7 @@ const httpDelete = (url, params) => {
             return res
         })
 }
+
+const request = (opt)=>{
+    return axios.request(opt)
+}

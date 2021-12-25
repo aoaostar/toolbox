@@ -198,6 +198,19 @@ function unzip($filepath, $filename)
     }
     return false;
 }
+//多维转一维数组
+function multi2one($data, $dir = '', $step = '')
+{
+    $list = [];
+    foreach ($data as $k => $v) {
+        if (is_array($v)) {
+            $list = array_merge($list, multi2one($v, $k ,$step));
+        } else {
+            $list[] = $dir . $v;
+        }
+    }
+    return $list;
+}
 
 function tree_relative($dir)
 {

@@ -61,6 +61,7 @@ class Plugin extends BaseController
             'class|插件类名' => 'unique:plugin|is_legal_plugin_class',
             'category_id|分类' => 'integer',
             'enable' => 'integer',
+            'weight|权重' => 'integer',
         ]);
         if (!$validate->check($params)) {
 
@@ -78,6 +79,7 @@ class Plugin extends BaseController
             'version',
             'title',
             'enable',
+            'weight',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }
@@ -96,6 +98,7 @@ class Plugin extends BaseController
             'version|插件版本号' => 'require',
             'category_id|分类' => 'require|integer',
             'enable' => 'integer',
+            'weight|权重' => 'integer',
         ]);
         if (!$validate->check($params)) {
 
@@ -113,6 +116,7 @@ class Plugin extends BaseController
             'version',
             'title',
             'enable',
+            'weight',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }
@@ -139,6 +143,10 @@ class Plugin extends BaseController
                     $uninstall = new $class();
                     $uninstall->UnInstall($plugin);
                 }
+            }
+            $logoFile = plugin_logo_path_get($plugin->class);
+            if (is_file($logoFile)){
+                unlink($logoFile);
             }
             Db::name('plugin')->delete($params['id']);
             if (!empty($plugin->class)) {

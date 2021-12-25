@@ -5,5 +5,7 @@
 return [
     // 指令定义
     'commands' => [
+
+        'plugin:package' => 'app\command\PluginPackage',
     ],
 ];

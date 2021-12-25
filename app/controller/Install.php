@@ -73,7 +73,7 @@ class Install extends Base
             return msg('error', $e->getMessage());
         }
         try {
-            $envFile = file_get_contents(app()->getRootPath() . '.example.env');
+            $envFile = file_get_contents(app()->getRootPath() . '.env.example');
             $envOperation = new EnvOperation($envFile);
             foreach (array_keys($rules) as $value) {
                 $envOperation->set(mb_strtoupper($value), $params[$value]);

@@ -1,2 +1,6 @@
-*.zip
+*
 !.gitignore
+!*.php
+!aoaostar_com
+!aoaostar_com/example
+!aoaostar_com/example/*

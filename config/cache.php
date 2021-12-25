@@ -16,7 +16,7 @@ return [
             // 缓存保存目录
             'path'       => '',
             // 缓存前缀
-            'prefix'     => 'aoaostar_toolbox_',
+            'prefix'     => 'aoaostar_',
             // 缓存有效期 0表示永久缓存
             'expire'     => 3600,
             // 缓存标签前缀

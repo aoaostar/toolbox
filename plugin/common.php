@@ -22,6 +22,16 @@ function plugin_path_get($class = '')
     return realpath(app()->getRootPath() . "/plugin/$class");
 }
 
+function plugin_logo_path_get($class)
+{
+    return app()->getRootPath() . 'public' . plugin_logo_relative_path_get($class);
+}
+
+function plugin_logo_relative_path_get($class)
+{
+    return '/static/icons/' . str_replace(['\\', '/'], '_', $class) . '.png';
+}
+
 function plugin_template_path_get($pluginClass = ""): string
 {
     return plugin_path_get($pluginClass) . '/index.html';
