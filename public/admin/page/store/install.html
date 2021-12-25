@@ -198,14 +198,14 @@
             layer = layui.layer,
             laytpl = layui.laytpl;
         let tasks = []
-        var pluginId = getQueryString('id');
+        const pluginId = getQueryString('id');
         tasks.push(cloud_plugin_get(pluginId).then(res => {
             $('#logo').attr('src', res.data.logo)
             res.data['user.nickname'] = res.data.user.nickname
             form.val('plugin-info', res.data)
         }))
         tasks.push(categories_get().then(res => {
-            var getTpl = document.getElementById('categoies_tpl').innerHTML,
+            const getTpl = document.getElementById('categoies_tpl').innerHTML,
                 view = document.getElementById('categories');
             laytpl(getTpl).render(res.data.items, function (html) {
                 view.innerHTML = html;

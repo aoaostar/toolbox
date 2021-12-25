@@ -12,7 +12,7 @@ class Install implements \plugin\Install
     {
         $model->title = "Hello，Pluto";
         $model->class = plugin_current_class_get(__NAMESPACE__);
-        $model->alias = basename(__NAMESPACE__);
+        $model->alias = base_space_name(__NAMESPACE__);
         $model->desc = 'If you see this message, it means that your program is running properly.';
         $model->version = 'v1.0';
     }

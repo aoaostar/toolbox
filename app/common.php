@@ -198,13 +198,14 @@ function unzip($filepath, $filename)
     }
     return false;
 }
+
 //多维转一维数组
 function multi2one($data, $dir = '', $step = '')
 {
     $list = [];
     foreach ($data as $k => $v) {
         if (is_array($v)) {
-            $list = array_merge($list, multi2one($v, $k ,$step));
+            $list = array_merge($list, multi2one($v, $k, $step));
         } else {
             $list[] = $dir . $v;
         }
@@ -339,8 +340,16 @@ function format_date($timestamp = null)
     }
     return date('Y-m-d H:i:s', $timestamp);
 }
+
 if (!function_exists('str_starts_with')) {
-    function str_starts_with($str, $start) {
-        return (@substr_compare($str, $start, 0, strlen($start))==0);
+    function str_starts_with($str, $start)
+    {
+        return (@substr_compare($str, $start, 0, strlen($start)) == 0);
     }
+}
+//当前命名空间的包名
+function base_space_name($space)
+{
+    $str_replace = str_replace('\\', '/', $space);
+    return basename($str_replace);
 }
