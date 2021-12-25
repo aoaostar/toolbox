@@ -2,6 +2,16 @@
 ﻿
 {block name="title"}{$app.title} - {$app.subTitle}{/block}
 {block name="main"}
+<style>
+    .card{
+        width: 500px;
+    }
+    @media screen and (max-width: 760px){
+        .card{
+            width: 95vw;
+        }
+    }
+</style>
 <div class="container mx-auto">
     <div class="card  shadow-lg fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
         <div class="card-body">
@@ -10,14 +20,4 @@
         </div>
     </div>
 </div>
-<style>
-    .card{
-        width: 500px;
-    }
-    @media screen and(max-width: 760px){
-        .card{
-            width: 98vw;
-        }
-    }
-</style>
 {/block}
