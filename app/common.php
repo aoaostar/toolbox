@@ -339,3 +339,8 @@ function format_date($timestamp = null)
     }
     return date('Y-m-d H:i:s', $timestamp);
 }
+if (!function_exists('str_starts_with')) {
+    function str_starts_with($str, $start) {
+        return (@substr_compare($str, $start, 0, strlen($start))==0);
+    }
+}
