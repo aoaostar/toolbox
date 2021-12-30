@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css"/>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
     <script src="/static/http.js?v={:get_version()}"></script>
     <script src="/static/common.js?v={:get_version()}"></script>
     <script src="/static/api.js?v={:get_version()}"></script>
@@ -283,6 +283,7 @@
                         if (values.includes(false)) {
                             this.step = oldVal
                             $message.error('环境不通过')
+                            this.status[newVal] = false
                             return
                         }
                         break

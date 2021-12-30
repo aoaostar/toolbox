@@ -16,17 +16,15 @@ class Ota extends Base
     public function initialize()
     {
         reset_opcache();
-        $query = http_build_query([
-            'domain' => Request::domain(),
-        ]);
-        $api = base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbQ==');
-        $this->RELEASE_API = "$api?$query";
+        $this->RELEASE_API = base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbQ==');
     }
 
     private function get_last_release()
     {
 
-        $res = aoaostar_get($this->RELEASE_API);
+        $res = aoaostar_get($this->RELEASE_API, [
+            'referer:' . Request::domain(),
+        ]);
         $json = json_decode($res);
 
         if (empty($json) || empty($json->data)) {

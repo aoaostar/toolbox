@@ -14,6 +14,7 @@ class Cloud extends Base
     private $PLUGINS_API = '';
     private $CATEGORIES_API = '';
     private $RELEASES_API = '';
+    private $HEADERS = [];
 
     public function initialize()
     {
@@ -22,6 +23,9 @@ class Cloud extends Base
         $this->PLUGINS_API = "$api/open/plugins";
         $this->CATEGORIES_API = "$api/open/categories";
         $this->RELEASES_API = "$api/open/releases";
+        $this->HEADERS = [
+            'referer:' . Request::url(true)
+        ];
     }
 
     public function categories()
@@ -31,10 +35,7 @@ class Cloud extends Base
             return msg("ok", "success", $data);
         }
 
-        $query = http_build_query([
-            'referer' => Request::url(true),
-        ]);
-        $res = aoaostar_get("$this->CATEGORIES_API?$query");
+        $res = aoaostar_get($this->CATEGORIES_API, $this->HEADERS);
         $json = json_decode($res);
         if (empty($json) || empty($json->data)) {
             if (!empty($json->message)) {
@@ -52,10 +53,7 @@ class Cloud extends Base
         if (!empty($data)) {
             return msg("ok", "success", $data);
         }
-        $query = http_build_query([
-            'referer' => Request::url(true),
-        ]);
-        $res = aoaostar_get("$this->PLUGINS_API?$query");
+        $res = aoaostar_get($this->PLUGINS_API, $this->HEADERS);
         $json = json_decode($res);
         if (empty($json) || empty($json->data)) {
             if (!empty($json->message)) {
@@ -87,11 +85,10 @@ class Cloud extends Base
             return msg("ok", "success", $data);
         }
         $query = http_build_query([
-            'referer' => Request::url(true),
             'page' => 1,
             'limit' => 12,
         ]);
-        $res = aoaostar_get("$this->RELEASES_API?$query");
+        $res = aoaostar_get("$this->RELEASES_API?$query", $this->HEADERS);
         $json = json_decode($res);
         if (empty($json) || empty($json->data)) {
             if (!empty($json->message)) {
@@ -107,9 +104,8 @@ class Cloud extends Base
     {
         $query = http_build_query([
             'id' => $id,
-            'referer' => Request::url(true),
         ]);
-        $res = aoaostar_get("$this->PLUGIN_API?$query");
+        $res = aoaostar_get("$this->PLUGIN_API?$query", $this->HEADERS);
         $json = json_decode($res);
 
         if (empty($json) || empty($json->data)) {
