@@ -16,7 +16,7 @@ class Ota extends Base
     public function initialize()
     {
         reset_opcache();
-        $this->RELEASE_API = base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbQ==');
+        $this->RELEASE_API = base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbS9vcGVuL3JlbGVhc2U=');
     }
 
     private function get_last_release()

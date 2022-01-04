@@ -3,6 +3,18 @@ body {
     min-height: 100vh;
     flex-direction: column;
 }
+
 .site-main {
     flex: 1;
+}
+
+
+[data-theme=light] {
+    --p: 0 0% 32%;
+    --pf: 0 0% 45.1%;
+}
+
+[data-theme=dark] {
+    --p: 222 13.4% 19%;
+    --pf: 223 13.7% 10%;
 }

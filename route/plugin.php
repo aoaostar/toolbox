@@ -3,7 +3,6 @@
 use think\facade\Route;
 use think\facade\View;
 
-
 Route::rule('api/:alias/[:method]', function () {
     $alias = plugin_alias_get();
     $method = plugin_method_get();
@@ -17,7 +16,7 @@ Route::rule('api/:alias/[:method]', function () {
         return msg("error", "该Api不存在该方法");
     }
     return $app->$method();
-})->middleware([\app\middleware\RequestRecord::class]);
+})->pattern(['alias' => '[\w|\-/]+'])->middleware([\app\middleware\RequestRecord::class]);
 
 Route::get(':alias', function () {
     $alias = plugin_alias_get();
