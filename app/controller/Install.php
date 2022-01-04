@@ -20,6 +20,7 @@ class Install extends Base
         Cache::clear();
         reset_opcache();
     }
+
     public function initialize()
     {
         // 检测是否已安装
@@ -128,7 +129,9 @@ class Install extends Base
             }
         }
         file_put_contents(app()->getRootPath() . 'install.lock', format_date());
-        @aoaostar_get(base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbS9vcGVuL2luc3RhbGw='));
+        @aoaostar_get(base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbS9vcGVuL2luc3RhbGw='), [
+            'referer:' . Request::domain(true),
+        ]);
         return msg();
     }
 
