@@ -49,6 +49,53 @@ const changeBlobFileName = (blob) => {
     });
 }
 
+const secToTime = s => {
+    let t = '';
+    if (s > -1) {
+        let hour = Math.floor(s / 3600)
+        let min = Math.floor(s / 60) % 60
+        let sec = s % 60
+        if (hour > 0) {
+            if (hour < 10) {
+                t += '0'
+            }
+            t = hour + "h"
+        }
+        if (hour > 0 || min > 0) {
+            if (min < 10) {
+                t += '0'
+            }
+            t += min + "m"
+        }
+        if (sec < 10) {
+            t += '0'
+        }
+        t += sec + 's'
+    }
+    return t
+}
+// 文件大小格式转换
+const changeFilesize = (filesize) => {
+    filesize = parseInt(filesize);
+    let size = "";
+    if (filesize === 0) {
+        size = "0.00 B"
+    } else if (filesize < 1024) { //小于1KB，则转化成B
+        size = filesize.toFixed(2) + " B"
+    } else if (filesize < 1024 * 1024) { //小于1MB，则转化成KB
+        size = (filesize / 1024).toFixed(2) + " KB"
+    } else if (filesize < 1024 * 1024 * 1024) { //小于1GB，则转化成MB
+        size = (filesize / (1024 * 1024)).toFixed(2) + " MB"
+    } else { //其他转化成GB
+        size = (filesize / (1024 * 1024 * 1024)).toFixed(2) + " GB"
+    }
+    return size;
+}
+// 下载速度格式转换
+const changeDownloadSpeed = (filesize) => {
+    filesize = changeFilesize(filesize);
+    return filesize.replace(/\s([K|M|G|B]*)B{0,1}/, '$1/s')
+}
 window.onscroll = function () {
     var scrollTop = document.documentElement.scrollTop ?
         document.documentElement.scrollTop :

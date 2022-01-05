@@ -18,3 +18,9 @@ body {
     --p: 222 13.4% 19%;
     --pf: 223 13.7% 10%;
 }
+
+.stats .stat {
+    border-width: 1px;
+    margin-top: -1px;
+    margin-bottom: -1px;
+}
