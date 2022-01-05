@@ -16,7 +16,7 @@ Route::rule('api/:alias/[:method]', function () {
         return msg("error", "该Api不存在该方法");
     }
     return $app->$method();
-})->pattern(['alias' => '[\w|\-/]+'])->middleware([\app\middleware\RequestRecord::class]);
+})->middleware([\app\middleware\RequestRecord::class]);
 
 Route::get(':alias', function () {
     $alias = plugin_alias_get();
