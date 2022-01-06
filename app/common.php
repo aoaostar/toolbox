@@ -317,7 +317,15 @@ function tree_github($github, $type = 'tree')
 function config_get($key)
 {
     $model = \app\model\Config::getByKey($key);
-    return $model->value;
+    if (isset($model->value)) {
+
+        return $model->value;
+    }
+    $arr = [];
+    foreach ($model as $v) {
+        $arr[substr($v->key, strlen($key))] = $v->value;
+    }
+    return $arr;
 }
 
 function config_set($key, $value)
@@ -341,15 +349,24 @@ function format_date($timestamp = null)
     return date('Y-m-d H:i:s', $timestamp);
 }
 
+//当前命名空间的包名
+function base_space_name($space)
+{
+    $str_replace = str_replace('\\', '/', $space);
+    return basename($str_replace);
+}
+
+
 if (!function_exists('str_starts_with')) {
     function str_starts_with($str, $start)
     {
         return (@substr_compare($str, $start, 0, strlen($start)) == 0);
     }
 }
-//当前命名空间的包名
-function base_space_name($space)
-{
-    $str_replace = str_replace('\\', '/', $space);
-    return basename($str_replace);
+if (!function_exists('str_ends_with')) {
+    function str_ends_with(string $haystack, string $needle): bool
+    {
+        $needle_len = strlen($needle);
+        return ($needle_len === 0 || 0 === substr_compare($haystack, $needle, -$needle_len));
+    }
 }

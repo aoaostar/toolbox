@@ -20,10 +20,7 @@ class View
         $categories = Category::select();
 
         \think\facade\View::assign([
-            "app" => [
-                "title" => config_get('global.title'),
-                "subTitle" => config_get("global.subtitle")
-            ],
+            "app" => config_get('global.'),
             'categories' => $categories,
             'user' => get_user(),
         ]);

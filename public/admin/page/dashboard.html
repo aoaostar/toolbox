@@ -526,6 +526,7 @@
             var title = $(this).children('.layuimini-notice-title').text(),
                 noticeTime = $(this).children('.layuimini-notice-extra').text(),
                 content = $(this).children('.layuimini-notice-content').html();
+            content = content.replaceAll('\n', '<br/>')
             let html = `<div>
             <p>版本号：${title}</p>
             <p>发布时间：${noticeTime}</p>

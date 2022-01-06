@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app\model;
 
@@ -24,7 +24,12 @@ class Config extends Model
 
     public static function getByKey($key)
     {
-        $model = Config::where('key', $key)->cache(60)->findOrEmpty();
+        $model = Config::cache(60);
+        if (str_ends_with($key, '.')) {
+            $model = $model->where('key', 'like', "%$key%")->select();
+        } else {
+            $model = $model->where('key', $key)->findOrEmpty();
+        }
         return $model;
     }
 }

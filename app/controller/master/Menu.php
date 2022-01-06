@@ -81,8 +81,8 @@ class Menu extends BaseController
                         "icon" => "fa fa-cloud-upload",
                         "target" => "_self",
                     ],
-                ]
-            ],
+                ],
+            ]
         ];
         $systemInit = [
             'homeInfo' => $homeInfo,

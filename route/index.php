@@ -2,7 +2,6 @@
 
 use think\facade\Route;
 
-
 Route::any('/stars', 'Index/stars')
     ->middleware(\app\middleware\Auth::class)
     ->middleware(\app\middleware\View::class);
