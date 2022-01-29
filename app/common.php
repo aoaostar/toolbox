@@ -80,6 +80,7 @@ function aoaostar_get($url, $headers = [])
     curl_setopt($curl, CURLOPT_URL, $url);
     #启用时会将头文件的信息作为数据流输出。
     curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
     #在尝试连接时等待的秒数。设置为 0，则无限等待。
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
     #允许 cURL 函数执行的最长秒数。
@@ -121,6 +122,7 @@ function aoaostar_post(
     curl_setopt($curl, CURLOPT_URL, $url);
     #启用时会将头文件的信息作为数据流输出。
     curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
     #设置头部信息
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     #在尝试连接时等待的秒数。设置为 0，则无限等待。
@@ -145,7 +147,6 @@ function aoaostar_post(
     return $return;
 }
 
-
 function aoaostar_curl($url, $put, $headers = [],
                        $type = 'PUT'
 )
@@ -161,6 +162,7 @@ function aoaostar_curl($url, $put, $headers = [],
     curl_setopt($curl, CURLOPT_URL, $url);
     #启用时会将头文件的信息作为数据流输出。
     curl_setopt($curl, CURLOPT_HEADER, false);
+    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
     #设置头部信息
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     #在尝试连接时等待的秒数。设置为 0，则无限等待。
@@ -368,5 +370,31 @@ if (!function_exists('str_ends_with')) {
     {
         $needle_len = strlen($needle);
         return ($needle_len === 0 || 0 === substr_compare($haystack, $needle, -$needle_len));
+    }
+}
+
+if (!function_exists('is_valid_url')) {
+
+    function is_valid_url($url = null)
+    {
+        if (empty($url)) return false;
+        if (!is_string($url)) return false;
+        $filter_var = boolval(filter_var($url, FILTER_VALIDATE_URL));
+        if ($filter_var) return $filter_var;
+        $parse_url = parse_url($url);
+        $path = array_pop($parse_url);
+
+        $url = str_ireplace($path, '/' . urlencode($path), $url);
+        return boolval(filter_var($url, FILTER_VALIDATE_URL));
+    }
+
+}
+
+if (!function_exists('client_ip')) {
+
+    function client_ip()
+    {
+        $ip = request()->server('HTTP_CF_CONNECTING_IP');
+        return $ip ?? request()->ip();
     }
 }

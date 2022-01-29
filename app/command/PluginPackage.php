@@ -14,7 +14,7 @@ class PluginPackage extends Command
     protected function configure()
     {
         // 指令配置
-        $this->setName('PluginPackage')
+        $this->setName('plugin:package')
             ->addArgument('space', Argument::REQUIRED, '插件域，例如：aoaostar_com')
             ->setDescription('打包指定域的所有插件');
     }
