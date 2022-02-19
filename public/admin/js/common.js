@@ -14,7 +14,7 @@ const aoaostar_table = {
         , countName: 'total' //规定数据总数的字段名称，默认：count
         , dataName: 'data' //规定数据列表的字段名称，默认：data
     },
-}
+};
 
 const imagePreview = (url) => {
     layer.open({

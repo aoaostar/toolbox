@@ -78,6 +78,11 @@
 </div>
 <script type="text/html" id="categories_tpl">
     <li class="layui-this">所有插件</li>
+    <li>需要更新
+        {{# if(d.need_update.length>0){ }}
+        <span class="layui-badge" id="need_update">{{d.need_update.length}}</span>
+        {{# }}}
+    </li>
     {{# layui.each(d, function(index, item){ }}
     <li>{{item.title}}</li>
     {{# }); }}
@@ -133,6 +138,56 @@
                     {{# } }}
                 </div>
             </li>
+            {{# }); }}
+        </ul>
+    </div>
+    <!--    需要更新-->
+    <div class="layui-tab-item">
+        <ul class="icons layui-row">
+            {{# layui.each(d.plugins, function(index, item){ }}
+            {{# if(item.current_version!==item.version){}}
+            <li class='layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg2 plugin-item'>
+                <div class="plugin-main">
+                    <img onclick="pluginInfo('{{item.id}}')" class="plugin-logo" src="{{item.logo}}" alt="">
+                    <div class="plugin-content">
+                        <p>{{ item.title }}</p>
+                        <p class="layui-badge layui-bg-black">{{item.user.nickname}}</p>
+                        <p class="layui-badge layui-bg-black">{{item.category.title}}</p>
+                        <div>
+                            {{# if(item.current_version){ }}
+                            <span class="layui-badge layui-bg-black">{{item.current_version}}</span>
+                            <span class="layui-badge">New {{item.version}}</span>
+                            {{# }else{ }}
+                            <span class="layui-badge layui-bg-black">{{item.version}}</span>
+                            {{# } }}
+                        </div>
+                        {{# if(item.tag){ }}
+                        <div>
+                            <p class="layui-badge layui-bg-green">{{item.tag}}</p>
+                        </div>
+                        {{# } }}
+                    </div>
+                </div>
+                <div class="plugin-action">
+                    {{# if(item.current_version===item.version){ }}
+                    <button type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">已安装
+                    </button>
+                    {{# }else{ }}
+
+                    {{# if(item.current_version){ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">更新
+                    </button>
+                    {{# }else{ }}
+                    <button onclick="pluginInstall('{{item.id}}')" type="button"
+                            class="layui-btn layui-btn-radius layui-btn-fluid layui-btn-sm ">安装
+                    </button>
+                    {{# } }}
+                    {{# } }}
+                </div>
+            </li>
+            {{# } }}
             {{# }); }}
         </ul>
     </div>
@@ -247,6 +302,9 @@
                 plugins: values[0].data.items,
                 categories: values[1].data.items,
             }
+            data.categories.need_update = data.plugins.filter(v => {
+                return v.current_version !== v.version
+            })
             laytpl(getTpl).render(data, function (html) {
                 view.innerHTML = html;
             });

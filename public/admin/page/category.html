@@ -54,7 +54,6 @@
 <script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
 <script src="../js/api.js" charset="utf-8"></script>
 <script>
-
     layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
             form = layui.form,
@@ -72,11 +71,24 @@
             cols: [[
                 {type: 'checkbox', fixed: 'left'}
                 , {field: 'id', width: 80, title: 'ID', sort: true, fixed: 'left'},
-                {field: 'title', width: 150, title: '分类标题', sort: true, align: 'center'},
-                {field: 'weight', width: 150, title: '权重', sort: true, align: 'center'},
+                {field: 'title', width: 150, title: '分类标题', sort: true, align: 'center', edit: 'text'},
+                {
+                    field: 'weight',
+                    width: 150,
+                    title: '权重',
+                    sort: true,
+                    align: 'center',
+                    edit: 'text'
+                },
                 {field: 'create_time', width: 200, title: '创建时间', sort: true, align: 'center'},
                 {field: 'update_time', width: 200, title: '修改时间', sort: true, align: 'center'},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                {
+                    title: '操作',
+                    width: 200,
+                    toolbar: '#currentTableBar',
+                    align: "center",
+                    fixed: 'right'
+                }
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
@@ -98,7 +110,6 @@
 
             return false;
         });
-
         /**
          * toolbar监听事件
          */
@@ -185,9 +196,19 @@
                 });
             }
         });
-
+        //触发单元格编辑
+        table.on('edit(currentTableFilter)', function (obj) {
+            layer.load(1)
+            category_update(obj.data).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功');
+                }
+            }).finally(() => {
+                table.reload('currentTableFilter')
+                layer.closeAll('loading')
+            })
+        });
     });
 </script>
-
 </body>
 </html>

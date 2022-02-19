@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
     <link rel="stylesheet" href="../css/public.css" media="all">
     <script src="../js/common.js" charset="utf-8"></script>
+    <style>
+        /*修复table中select显示不完整*/
+        .layui-input {
+            height: 30px;
+        }
+
+        [data-field='category'] .layui-table-cell {
+            overflow: visible !important;
+        }
+    </style>
 </head>
 <body>
 <div class="layuimini-container">
@@ -71,11 +81,11 @@
 <script src="../js/api.js" charset="utf-8"></script>
 <script>
 
+
     layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
             form = layui.form,
             table = layui.table;
-
         table.render({
             elem: '#currentTableId',
             url: '/master/plugins',
@@ -89,21 +99,19 @@
                 {type: 'checkbox', fixed: 'left'}
                 , {field: 'id', width: 80, title: 'ID', sort: true, fixed: 'left'},
                 {field: 'logo', width: 100, title: '插件logo', align: 'center', templet: '#imagePreview'},
-                {field: 'title', width: 150, title: '插件标题', sort: true, align: 'center'},
-                {field: 'desc', width: 150, title: '插件描述', align: 'center'},
-                {field: 'alias', width: 150, title: '别名路由', sort: true, align: 'center'},
-                {field: 'class', width: 200, title: '插件类名', sort: true, align: 'center'},
+                {field: 'title', width: 150, title: '插件标题', sort: true, align: 'center', edit: 'text'},
+                {field: 'desc', width: 150, title: '插件描述', align: 'center', edit: 'text'},
+                {field: 'alias', width: 150, title: '别名路由', sort: true, align: 'center', edit: 'text'},
+                {field: 'class', width: 200, title: '插件类名', sort: true, align: 'center', edit: 'text'},
                 {
                     field: 'enable', width: 150, title: '是否启用', align: 'center', templet: function (res) {
-                        if (res.enable == 1) {
-                            return '<span class="layui-badge layui-bg-green">active</span>'
-                        }
-                        return '<span class="layui-badge layui-bg-orange">disabled</span>'
+                        return `<input type="checkbox" name="enable" value="${res.enable}" data-id="${res.id}" lay-skin="switch" lay-text="启用|禁用" lay-filter="enable_switch" ${res.enable == 1 ? 'checked' : ''}>`
                     }
                 },
-                {field: 'weight', width: 80, title: '权重', sort: true, align: 'center'},
+                {field: 'weight', width: 80, title: '权重', sort: true, align: 'center', edit: 'text'},
                 {
-                    field: 'category', width: 150, title: '分类', align: 'center', templet: function (res) {
+                    field: 'category', width: 200, title: '分类', align: 'center', templet: function (res) {
+                        return `<select name="category" data-id="${res.id}" data-value="${res.category_id}" lay-filter="category_select"></select>`
                         if (res.category) {
                             return res.category.title
                         }
@@ -125,7 +133,22 @@
             page: true,
             skin: 'line',
             response: aoaostar_table.response,
-            parseData: aoaostar_table.parseData
+            parseData: aoaostar_table.parseData,
+            done: function (res, curr, count) {
+                categories_get().then(res => {
+                    let categories = res.data.items
+                    let html = '<option value="0">默认组</option>'
+                    for (const category of categories) {
+                        html += `<option value="${category.id}">${category.title}</option>`
+                    }
+                    let doms = $('select[name="category"]');
+                    doms.html(html)
+                    for (dom of doms) {
+                        $(dom).val($(dom).data('value'));
+                    }
+                    form.render('select');
+                })
+            }
         });
 
         // 监听搜索操作
@@ -220,6 +243,48 @@
                     layer.close(index);
                 });
             }
+        });
+
+        //监听插件启用禁用操作
+        form.on('switch(enable_switch)', function (obj) {
+            layer.load(1)
+            plugin_update({
+                id: $(obj.elem).data('id'),
+                enable: obj.elem.checked ? 1 : 0
+            }).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功');
+                }
+            }).finally(() => {
+                layer.closeAll('loading')
+            })
+        });
+
+        //触发单元格编辑
+        table.on('edit(currentTableFilter)', function (obj) {
+            layer.load(1)
+            plugin_update(obj.data).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功');
+                }
+            }).finally(() => {
+                table.reload('currentTableFilter')
+                layer.closeAll('loading')
+            })
+        });
+        form.on('select(category_select)', function (data) {
+            layer.load(1)
+            plugin_update({
+                id: $(data.elem).data('id'),
+                category_id: data.value,
+            }).then(res => {
+                if (res.status === 'ok') {
+                    $message.success('保存成功');
+                }
+            }).finally(() => {
+                table.reload('currentTableFilter')
+                layer.closeAll('loading')
+            })
         });
 
     });

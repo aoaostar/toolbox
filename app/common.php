@@ -395,6 +395,6 @@ if (!function_exists('client_ip')) {
     function client_ip()
     {
         $ip = request()->server('HTTP_CF_CONNECTING_IP');
-        return $ip ?? request()->ip();
+        return $ip ?: request()->ip();
     }
 }
