@@ -68,7 +68,7 @@
                                 Star
                             </a>
                             {/if}
-                            <button @click="categoryId=item.id" class="btn btn-ghost btn-sm rounded-btn"
+                            <button @click="categoryId=item.category.id" class="btn btn-ghost btn-sm rounded-btn"
                                     v-if="item.category!==null">
                                 [{{item.category.title}}]
                             </button>
