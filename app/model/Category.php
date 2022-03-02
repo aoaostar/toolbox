@@ -6,6 +6,7 @@ namespace app\model;
 
 /**
  * @property int $id
+ * @property int $weight 权重
  * @property string $create_time 安装时间
  * @property string $title 标题
  * @property string $update_time 更新时间

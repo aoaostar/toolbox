@@ -72,8 +72,18 @@ class System extends BaseController
                 array_push($arr, basename($v));
             }
         }
+        return msg('ok', 'success', $arr);
 
-
+    }
+    public function plugin_templates()
+    {
+        $glob = glob(template_path_get() . '/template/*');
+        $arr = [];
+        foreach ($glob as $v) {
+            if (is_file($v)) {
+                array_push($arr, basename($v,'.html'));
+            }
+        }
         return msg('ok', 'success', $arr);
 
     }

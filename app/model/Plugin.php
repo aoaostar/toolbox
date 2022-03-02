@@ -10,14 +10,17 @@ use think\Model;
  * Class app\model\Plugin
  *
  * @property int $category_id 分类
+ * @property int $enable 是否启用
  * @property int $id
  * @property int $request_count 接口请求次数
+ * @property int $weight 权重
  * @property string $alias 插件名
  * @property string $class 插件类
  * @property string $config 配置信息
  * @property string $create_time 安装时间
  * @property string $desc 插件描述
  * @property string $logo 插件logo
+ * @property string $template
  * @property string $title 插件标题
  * @property string $update_time 更新时间
  * @property string $version 版本

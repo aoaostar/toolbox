@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>layui</title>
+    <title>编辑插件</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -35,7 +35,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">logo:</label>
         <div class="layui-input-block">
-            <input type="text" name="logo" placeholder="请输入插件logo" value="/static/images/plugin_default.jpg"
+            <input type="text" name="logo" placeholder="请输入插件logo" value="/static/images/plugin_default.png"
                    lay-verify="required" lay-reqtext="插件logo不能为空"
                    class="layui-input" required>
             <tip>插件Logo，无需多言</tip>
@@ -71,7 +71,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">插件权重:</label>
         <div class="layui-input-block">
-            <input type="number" name="weight" placeholder="请填写插件权重" value=""
+            <input type="number" name="weight" placeholder="请填写插件权重" value="0"
                    lay-verify="required" lay-reqtext="插件权重不能为空"
                    class="layui-input" required>
             <tip>填数字，数字越大排名越前。</tip>
@@ -109,6 +109,15 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">模板:</label>
+        <div class="layui-input-block">
+            <select lay-verify="required" name="template" id="templates" lay-verify="required" lay-reqtext="请选择模板">
+            </select>
+            <tip>默认运行本地插件，可通过设置模板实现iframe或redirect功能</tip>
+            <tip>模板位于view/index/default/template目录</tip>
+        </div>
+    </div>
+    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="saveBtn">确认保存</button>
         </div>
@@ -119,6 +128,14 @@
         <option value="0">默认组</option>
         {{# layui.each(d, function(index, item){ }}
         <option value="{{ item.id }}">{{ item.title }}</option>
+        {{# }); }}
+    </select>
+</script>
+<script id="templates_tpl" type="text/html">
+    <select lay-verify="required" name="category_id">
+        <option value="default">default</option>
+        {{# layui.each(d, function(index, item){ }}
+        <option value="{{ item }}">{{ item }}</option>
         {{# }); }}
     </select>
 </script>
@@ -138,6 +155,14 @@
             var getTpl = document.getElementById('categoies_tpl').innerHTML,
                 view = document.getElementById('categories');
             laytpl(getTpl).render(res.data.items, function (html) {
+                view.innerHTML = html;
+                form.render();
+            });
+        }))
+        tasks.push(plugin_templates_get().then(res => {
+            var getTpl = document.getElementById('templates_tpl').innerHTML,
+                view = document.getElementById('templates');
+            laytpl(getTpl).render(res.data, function (html) {
                 view.innerHTML = html;
                 form.render();
             });

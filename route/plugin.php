@@ -25,9 +25,13 @@ Route::get(':alias', function () {
         abort(404, '页面异常');
     }
     $template = plugin_template_path_get($path);
+    $model = plugin_info_get($alias);
     View::assign([
-        "plugin" => plugin_info_get($alias)
+        "plugin" => $model
     ]);
+    if ($model->template !== 'default') {
+        $template = template_path_get() . 'template/' . $model->template . '.html';
+    }
     return view($template);
 })->pattern(['alias' => '[\w|\-/]+'])
     ->middleware(\app\middleware\View::class);

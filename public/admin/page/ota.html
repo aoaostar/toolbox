@@ -21,6 +21,11 @@
             padding: .5rem;
         }
 
+        .ota-console {
+            max-width: 600px;
+            max-height: 400px;
+        }
+
     </style>
 </head>
 <body>
@@ -112,7 +117,8 @@
         layer.open({
             type: 1,
             title: '在线更新',
-            area: ['600px', '400px'],
+            area: ['85vw', '400px'],
+            skin: 'ota-console',
             shade: 0.8,
             id: 'ota_update',
             content: `<div class="console" id="console"></div>`,

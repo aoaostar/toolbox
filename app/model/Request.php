@@ -12,6 +12,7 @@ namespace app\model;
  * @property int $request_count 接口请求次数
  * @property string $create_time 安装时间
  * @property string $update_time 更新时间
+ * @property-read \app\model\Plugin $plugin
  */
 class Request extends Base
 {

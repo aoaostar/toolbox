@@ -20,6 +20,7 @@ Route::group('master', function () {
     Route::delete('/category', 'Category/delete');
 
     Route::get('/system/templates', 'System/templates');
+    Route::get('/system/plugin_templates', 'System/plugin_templates');
     Route::get('/system/info', 'System/info');
     Route::get('/system', 'System/all');
     Route::post('/system', 'System/update');

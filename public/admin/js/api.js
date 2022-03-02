@@ -149,6 +149,11 @@ const system_get = () => {
 const templates_get = () => {
     return httpGet('/master/system/templates')
 }
+
+const plugin_templates_get = () => {
+    return httpGet('/master/system/plugin_templates')
+}
+
 const ota_check = () => {
     return httpGet('/master/ota/check')
 }

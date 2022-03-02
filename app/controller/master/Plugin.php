@@ -80,6 +80,7 @@ class Plugin extends BaseController
             'title',
             'enable',
             'weight',
+            'template',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }
@@ -117,6 +118,7 @@ class Plugin extends BaseController
             'title',
             'enable',
             'weight',
+            'template',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }

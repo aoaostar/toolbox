@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>layui</title>
+    <title>插件管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -118,6 +118,7 @@
                         return '默认分组'
                     }
                 },
+                {field: 'template', width: 100, title: '模板', sort: true, align: 'center'},
                 {
                     field: 'config', width: 150, title: '配置信息', align: 'center', templet: function (res) {
                         return JSON.stringify(res.config, null, 4)

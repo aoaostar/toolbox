@@ -119,6 +119,7 @@ class Plugin
                 $model->config = [];
                 $model->category_id = 0;
                 $model->request_count = 0;
+                $model->template = 'default';
             }
             if (is_file($this->pluginPath . '/logo.png')) {
                 $logoFilename = plugin_logo_path_get($this->pluginClass);

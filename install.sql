@@ -80,6 +80,7 @@ CREATE TABLE `toolbox_plugin`  (
   `enable` int(11) NOT NULL DEFAULT 1 COMMENT '是否启用',
   `request_count` int(11) NOT NULL DEFAULT 0 COMMENT '接口请求次数',
   `category_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类',
+  `template` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'default',
   `create_time` datetime NOT NULL COMMENT '安装时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
@@ -90,7 +91,7 @@ CREATE TABLE `toolbox_plugin`  (
 -- ----------------------------
 -- Records of toolbox_plugin
 -- ----------------------------
-INSERT INTO `toolbox_plugin` VALUES (1, 'Hello，Pluto', '/static/icons/aoaostar_com_example.png', 'If you see this message, it means that your program is running properly', 'example', 'aoaostar_com\\example', '{}', 'v1.0', 0, 1, 0, 1, '2021-12-22 18:38:35', '2021-12-25 13:50:14');
+INSERT INTO `toolbox_plugin` VALUES (1, 'Hello，Pluto', '/static/icons/aoaostar_com_example.png', 'If you see this message, it means that your program is running properly', 'example', 'aoaostar_com\\example', '{}', 'v1.0', 0, 1, 0, 1, 'default', '2021-12-22 18:38:35', '2021-12-25 13:50:14');
 
 -- ----------------------------
 -- Table structure for toolbox_request
