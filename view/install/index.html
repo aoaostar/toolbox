@@ -4,11 +4,13 @@
     <title>安装向导 - 傲星工具箱</title>
     <link rel="icon" href="/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.5/dist/full.css" rel="stylesheet" type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css"/>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
+
+    <link href="{:cdnjs_cdn()}/daisyui/2.2.2/full.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{:cdnjs_cdn()}/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" type="text/css"/>
+    <script src="{:cdnjs_cdn()}/limonte-sweetalert2/11.4.4/sweetalert2.all.min.js"></script>
+    <script src="{:cdnjs_cdn()}/vue/2.6.14/vue.min.js"></script>
+    <script src="{:cdnjs_cdn()}/axios/0.26.0/axios.min.js"></script>
+
     <script src="/static/http.js?v={:get_version()}"></script>
     <script src="/static/common.js?v={:get_version()}"></script>
     <script src="/static/api.js?v={:get_version()}"></script>
@@ -104,7 +106,7 @@
         <div class="card text-center shadow-2xl main">
             <transition>
                 <div class="card-body" v-show="step===0">
-                    <h2 class="card-title">欢迎安装傲星工具箱</h2>
+                    <h2 class="card-title m-auto">欢迎安装傲星工具箱</h2>
                     <p>Welcome to install AOAOSTAR Toolbox.</p>
                     <div class="justify-center card-actions">
                         <button class="btn btn-outline btn-accent" @click="step++">开始安装吧~</button>
@@ -113,7 +115,7 @@
             </transition>
             <transition>
                 <div class="card-body" v-show="step===1">
-                    <h2 class="card-title">检测安装环境</h2>
+                    <h2 class="card-title m-auto">检测安装环境</h2>
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
@@ -145,7 +147,7 @@
             </transition>
             <transition>
                 <div class="card-body" v-show="step===2">
-                    <h2 class="card-title">配置数据库信息</h2>
+                    <h2 class="card-title m-auto">配置数据库信息</h2>
                     <div>
                         <div class="form-control">
                             <label class="label">
@@ -190,7 +192,7 @@
             </transition>
             <transition>
                 <div class="card-body" v-show="step===3">
-                    <h2 class="card-title">配置Oauth信息</h2>
+                    <h2 class="card-title m-auto">配置Oauth信息</h2>
                     <div>
                         <div class="form-control">
                             <label class="label">
@@ -235,7 +237,7 @@
             </transition>
             <transition>
                 <div class="card-body" v-show="step===4">
-                    <h2 class="card-title">完成安装</h2>
+                    <h2 class="card-title m-auto">完成安装</h2>
                     <p>恭喜你，已经成功安装了傲星工具箱，你好棒棒哦~</p>
                     <div class="justify-center card-actions">
                         <button class="btn btn-outline btn-accent" @click="redirect('/')">完成安装~</button>

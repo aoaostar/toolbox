@@ -316,18 +316,18 @@ function tree_github($github, $type = 'tree')
 
 }
 
-function config_get($key)
+function config_get($key, $default = '')
 {
     $model = \app\model\Config::getByKey($key);
     if (isset($model->value)) {
 
-        return $model->value;
+        return $model->value ?: $default;
     }
     $arr = [];
     foreach ($model as $v) {
         $arr[substr($v->key, strlen($key))] = $v->value;
     }
-    return $arr;
+    return $arr ?: ($default ?: []);
 }
 
 function config_set($key, $value)
@@ -358,6 +358,17 @@ function base_space_name($space)
     return basename($str_replace);
 }
 
+function cdnjs_cdn($file = '')
+{
+    $config_get = config_get('cdn.cdnjs', 'https://cdn.staticfile.org');
+    return $config_get . $file;
+}
+
+function npm_cdn($file = '')
+{
+    $config_get = config_get('cdn.npm', 'https://cdn.jsdelivr.net/npm');
+    return $config_get . $file;
+}
 
 if (!function_exists('str_starts_with')) {
     function str_starts_with($str, $start)

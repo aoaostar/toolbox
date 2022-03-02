@@ -7,11 +7,13 @@
     <meta name="keywords" content="{$plugin.title},{$app.keywords}">
     <meta name="description" content="{$plugin.desc}">
     <meta name="author" content="Pluto" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.5/dist/full.css" rel="stylesheet" type="text/css"/>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css"/>
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@0.24.0/dist/axios.min.js"></script>
+
+    <link href="{:cdnjs_cdn()}/daisyui/2.2.2/full.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{:cdnjs_cdn()}/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" type="text/css"/>
+    <script src="{:cdnjs_cdn()}/limonte-sweetalert2/11.4.4/sweetalert2.all.min.js"></script>
+    <script src="{:cdnjs_cdn()}/vue/2.6.14/vue.min.js"></script>
+    <script src="{:cdnjs_cdn()}/axios/0.26.0/axios.min.js"></script>
+
     <script src="/static/http.js?v={:get_version()}"></script>
     <script src="/static/common.js?v={:get_version()}"></script>
     <script src="/static/api.js?v={:get_version()}"></script>
@@ -35,6 +37,6 @@
 <div class="site-footer">
     {include file="layout/footer" /}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+<script src="{:npm_cdn()}/theme-change@2.0.2/index.js"></script>
 </body>
 </html>

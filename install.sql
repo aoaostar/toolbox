@@ -30,7 +30,7 @@ CREATE TABLE `toolbox_config`  (
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `key`(`key`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of toolbox_config
@@ -46,6 +46,8 @@ INSERT INTO `toolbox_config` VALUES (8, 'oauth.username', 'aoaostar', '2021-12-2
 INSERT INTO `toolbox_config` VALUES (9, 'oauth.client_id', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
 INSERT INTO `toolbox_config` VALUES (10, 'oauth.client_secret', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
 INSERT INTO `toolbox_config` VALUES (11, 'cloud.mirror', 'https://github.com/{owner}/{repo}/raw/{branch}/{path}', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (12, 'cdn.npm', 'https://cdn.jsdelivr.net/npm', '2022-03-02 17:56:15', '2022-03-02 18:13:43');
+INSERT INTO `toolbox_config` VALUES (13, 'cdn.cdnjs', 'https://cdn.staticfile.org', '2022-03-02 17:56:15', '2022-03-02 17:56:15');
 
 -- ----------------------------
 -- Table structure for toolbox_migration

@@ -15,7 +15,6 @@
                 {/foreach}
             </div>
             <div class="mt-4 lg:mt-0">
-
                 <svg class="text-base-content pointer-events-none absolute z-10 mt-4 ml-3 stroke-current opacity-60 "
                      width="16" height="16" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -36,7 +35,7 @@
                         </div>
                     </div>
                     <div class="ml-4 w-3/4 flex justify-center flex-col">
-                        <h2 class="card-title truncate">{{item.title}}</h2>
+                        <h2 class="card-title truncate block">{{item.title}}</h2>
                         <div class="flex">
                             {if(is_login())}
                             <button v-if="user.stars.indexOf(item.alias)===-1" class="btn btn-ghost btn-sm rounded-btn"
@@ -78,10 +77,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-3">
+                <div class="mt-0">
                     <p v-if="item.desc" class="truncate">{{item.desc}}</p>
                     <p v-else class="truncate">暂无描述</p>
-                    <div class="justify-center card-actions">
+                    <div class="justify-center card-actions mt-4">
                         <a class="btn btn-primary btn-block " target="_blank" :href="'/'+item.alias">进入</a>
                     </div>
                 </div>
