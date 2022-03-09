@@ -17,7 +17,7 @@ class View
      */
     public function handle($request, \Closure $next)
     {
-        $categories = Category::select();
+        $categories = Category::order('weight', 'desc')->select();
 
         \think\facade\View::assign([
             "app" => config_get('global.'),

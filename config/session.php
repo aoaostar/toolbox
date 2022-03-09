@@ -15,5 +15,5 @@ return [
     // 过期时间
     'expire'         => 86400*7,
     // 前缀
-    'prefix'         => '',
+    'prefix'         => 'aoaostar_session_',
 ];
