@@ -32,7 +32,7 @@ class PluginPackage extends Command
         $output->writeln("正在打包:[$space]下的文件");
         foreach ($plugins as $plugin) {
             $zip = new  ZipArchive();
-            $filename = $rootPath . 'ouput/' . $space . DIRECTORY_SEPARATOR . basename($plugin) . '.zip';
+            $filename = $rootPath . 'output/' . $space . DIRECTORY_SEPARATOR . basename($plugin) . '.zip';
             if (!is_dir(dirname($filename))) {
                 mkdir(dirname($filename), 0777, true);
             }

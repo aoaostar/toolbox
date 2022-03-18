@@ -113,7 +113,6 @@ function aoaostar_post(
     // 初始化
     $headers = array_merge([
         'User-Agent:Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50',
-
     ], $headers);
     // 创建一个新 cURL 资源
     $curl = curl_init();
@@ -407,5 +406,13 @@ if (!function_exists('client_ip')) {
     {
         $ip = request()->server('HTTP_CF_CONNECTING_IP');
         return $ip ?: request()->ip();
+    }
+}
+
+if (!function_exists('rand_ip')){
+
+    function rand_ip()
+    {
+        return mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255);
     }
 }

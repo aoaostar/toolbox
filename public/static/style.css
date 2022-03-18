@@ -24,3 +24,18 @@ body {
     margin-top: -1px;
     margin-bottom: -1px;
 }
+
+.hover\:.bg-base-100:hover {
+    --tw-bg-opacity: 1;
+    background-color: hsl(var(--b1))
+}
+
+.hover\:.bg-base-200:hover {
+    --tw-bg-opacity: 1;
+    background-color: hsl(var(--b2, var(--b1)))
+}
+
+.hover\:bg-base-300:hover {
+    --tw-bg-opacity: 1;
+    background-color: hsl(var(--b3, var(--b2)));
+}
