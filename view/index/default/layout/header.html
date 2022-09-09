@@ -26,30 +26,60 @@
             {include file="layout/change_theme" /}
             {if(is_login())}
             <div class="dropdown dropdown-end">
-                <a tabindex="0" class="btn btn-ghost btn-sm rounded-btn ">
+                <label tabindex="1" class="btn btn-ghost btn-sm rounded-btn justify-start truncate">
                     <div class="avatar mr-2">
                         <div class="rounded-full w-6 h-6">
-                            <img src="{$user->avatar_url}" alt="">
+                            <img src="{$user->avatar}" alt="">
                         </div>
                     </div>
-                    {$user->username}
-                </a>
-                <ul tabindex="0"
+                    <div class="flex-1 truncate" style="max-width: 10rem">
+                        {$user->username}
+                    </div>
+                </label>
+                <ul tabindex="2"
                     class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-48 text-base-content">
+                    <li>
+                        <a href="/user" class="btn btn-ghost  rounded-btn justify-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 class="inline-block w-5 mr-2 stroke-current">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            用户中心
+                        </a>
+                    </li>
                     {if(is_admin())}
                     <li>
-                        <a target="_blank" href="{:get_master_path()}">管理后台</a>
+                        <a href="{:get_master_path()}" class="btn btn-ghost rounded-btn justify-start">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 class="inline-block w-5 mr-2 stroke-current">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                            </svg>
+                            管理后台
+                        </a>
                     </li>
                     {/if}
                     <li>
-                        <a href="/auth/logout">注销登录</a>
+                        <a href="/auth/logout" class="btn btn-ghost  rounded-btn  justify-start order-last">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 class="inline-block w-5 mr-2 stroke-current">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+
+                            </svg>
+                            注销登录
+                        </a>
                     </li>
+
                 </ul>
             </div>
             {else}
             <a href="/auth/login" class="btn btn-ghost btn-sm rounded-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                 </svg>
                 Login
             </a>
@@ -59,14 +89,14 @@
     <div class="flex-none lg:hidden">
         {include file="layout/change_theme" /}
         <div class=" dropdown dropdown-end">
-            <button tabindex="0" class="btn btn-square btn-ghost">
+            <label tabindex="2" class="btn btn-square btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                      class="inline-block w-6 h-6 stroke-current">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
-            </button>
-            <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-48 text-base-content">
+            </label>
+            <ul tabindex="2" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-48 text-base-content">
                 <a href="/stars" class="btn btn-ghost btn-sm rounded-btn justify-start order-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          class="inline-block w-5 mr-2 stroke-current">
@@ -86,16 +116,26 @@
                 </a>
 
                 {if(is_login())}
-                <button class="btn btn-ghost btn-sm rounded-btn justify-start order-1">
+                <button class="btn btn-ghost btn-sm rounded-btn justify-start order-first truncate">
                     <div class="avatar mr-2">
                         <div class="rounded-full w-6 h-6">
-                            <img src="{$user->avatar_url}" alt="">
+                            <img src="{$user->avatar}" alt="">
                         </div>
                     </div>
-                    {$user->username}
+                    <div class="flex-1  text-left truncate">
+                        {$user->username}
+                    </div>
                 </button>
+                <a href="/user" class="btn btn-ghost btn-sm rounded-btn justify-start order-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         class="inline-block w-5 mr-2 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    用户中心
+                </a>
                 {if(is_admin())}
-                <a href="{:get_master_path()}" class="btn btn-ghost btn-sm rounded-btn justify-start order-4">
+                <a href="{:get_master_path()}" class="btn btn-ghost btn-sm rounded-btn justify-start order-5">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          class="inline-block w-5 mr-2 stroke-current">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -114,9 +154,11 @@
                     注销登录
                 </a>
                 {else}
-                <a href="/auth/login" class="btn btn-ghost btn-sm rounded-btn justify-start order-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                <a href="/auth/login" class="btn btn-ghost btn-sm rounded-btn justify-start order-last">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 " fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
                     </svg>
                     Login
                 </a>
