@@ -7,6 +7,7 @@ Route::group('master', function () {
     Route::get('/clear', 'Clear/get');
     Route::post('/plugin/install_status', 'Plugin/install_status');
     Route::post('/plugin/upload', 'Plugin/upload');
+    Route::post('/plugin/logo', 'Plugin/update_logo');
     Route::get('/plugins', 'Plugin/all');
     Route::get('/plugin', 'Plugin/get');
     Route::post('/plugin', 'Plugin/create');
@@ -51,9 +52,7 @@ Route::group('master/ota', function () {
 })->prefix('master.Ota/')->middleware(\app\middleware\AuthAdmin::class);
 
 Route::group('master/analysis', function () {
-    Route::get('plugin_total_request_count', 'plugin_total_request_count');
-    Route::get('plugin_max_request_count', 'plugin_max_request_count');
-    Route::get('plugin_request_count', 'plugin_request_count');
-    Route::get('user_active_count', 'user_active_count');
-    Route::get('user_increase_count', 'user_increase_count');
+    Route::get('console', 'console');
+    Route::get('traffic_trends', 'traffic_trends');
+    Route::get('statistics', 'statistics');
 })->prefix('master.Analysis/')->middleware(\app\middleware\AuthAdmin::class);

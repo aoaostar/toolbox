@@ -19,6 +19,10 @@ body {
     --pf: 223 13.7% 10%;
 }
 
+.stats {
+    overflow: visible;
+}
+
 .stats .stat {
     border-width: 1px;
     margin-top: -1px;

@@ -5,10 +5,11 @@
 └─plugin
    └─aoaostar_com       # 顶级域名 .用_代替
       └─example         # 插件名
-          App.php       # API
-          index.html    # 首页
-          Install.php   # 安装、卸载时会执行方法
-          logo.png      # logo 图片
+         └─static       # 静态文件目录
+        App.php         # API
+        index.html      # 首页
+        Install.php     # 安装、卸载时会执行方法
+        logo.png        # logo 图片
 ```
 
 ### Install.php
@@ -129,6 +130,3 @@ php think plugin:package aoaostar_com
 * `工具箱后台` - `插件中心`看不到我发布的插件?
     * 刷新缓存即可    
     * ![](images/plugin_5.png)
-* 插件更新了想要重新安装却要先卸载再安装太麻烦了
-    * 点击插件logo可以重新安装    
-    * ![](images/plugin_6.png)

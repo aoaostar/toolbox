@@ -5,6 +5,7 @@ namespace app\controller\api;
 
 
 use app\controller\Base;
+use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Validate;
 
@@ -25,10 +26,8 @@ class Plugin extends Base
 
             return msg('error', $validate->getError());
         }
-        $params['enable'] = 1;
         $plugins = \app\model\Plugin::all($params);
 
-        $plugins['items'] = array_values($plugins['items']->order('weight', 'desc')->toArray());
         return msg('ok', 'success', $plugins);
     }
 
@@ -58,5 +57,35 @@ class Plugin extends Base
         $user->stars = array_unique(array_values($stars));
         $user->save();
         return msg("ok", "success", $user->stars);
+    }
+
+    public function record()
+    {
+
+        $id = Request::param('id');
+        $validate = Validate::rule([
+            'id' => 'require|number'
+        ]);
+        if (!$validate->check(['id' => $id])) {
+            return msg('error', $validate->getError());
+        }
+        if (Cache::has(__METHOD__ . client_ip())) {
+            //多次请求不记录
+            return msg('ok', 'Recorded');
+        }
+        $plugin = \app\model\Plugin::where('id', $id)->field('id,request_count')->findOrEmpty();
+        if ($plugin->isExists()) {
+            $model = \app\model\Request::whereDay('create_time')->where('plugin_id', $plugin->id)->findOrEmpty();
+            if (!$model->isExists()) {
+                $model = new \app\model\Request();
+                $model->plugin_id = $plugin->id;
+            }
+            $model->request_count++;
+            $plugin->request_count++;
+            $model->save();
+            $plugin->save();
+        }
+        Cache::set(__METHOD__ . client_ip(), time(), 3600);
+        return msg();
     }
 }

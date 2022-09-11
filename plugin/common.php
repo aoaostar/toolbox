@@ -19,17 +19,17 @@ function plugin_current_class_get($namespace)
 function plugin_path_get($class = '')
 {
     $class = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $class);
-    return realpath(app()->getRootPath() . "/plugin/$class");
+    return app()->getRootPath() . "plugin/$class";
 }
 
-function plugin_logo_path_get($class)
+function plugin_logo_path_get($alias)
 {
-    return app()->getRootPath() . 'public' . plugin_logo_relative_path_get($class);
+    return plugin_path_get(plugin_class_get($alias)) . "/logo.png";
 }
 
-function plugin_logo_relative_path_get($class)
+function plugin_logo_relative_path_get($alias)
 {
-    return '/static/icons/' . str_replace(['\\', '/'], '_', $class) . '.png';
+    return $alias . '/logo.png';
 }
 
 function plugin_template_path_get($pluginClass = ""): string
@@ -45,11 +45,7 @@ function plugin_info_get($alias = '')
 
 function plugin_relative_path_get($alias = '')
 {
-    $model = plugin_info_get($alias);
-    if ($model->isEmpty()) {
-        return '';
-    }
-    return $model->class;
+    return str_replace('\\', '/', plugin_class_get($alias));
 }
 
 function plugin_class_get($alias = '')
@@ -58,7 +54,7 @@ function plugin_class_get($alias = '')
     if ($model->isEmpty()) {
         return '';
     }
-    return "plugin\\$model->class\\App";
+    return $model->class;
 }
 
 function plugin_config_get($alias = '')
@@ -81,4 +77,13 @@ function plugin_install($options = [])
     ]);
     $model->data($options);
     $model->save();
+}
+
+function plugin_static($alias)
+{
+    if (is_string($alias)) {
+
+        return "/$alias/static";
+    }
+    return "/$alias->alias/static";
 }

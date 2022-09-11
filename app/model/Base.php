@@ -29,6 +29,9 @@ class Base extends Model
             $limit = intval($param['limit']);
             $model = $model->limit($limit);
         }
+        if (isset($param['column']) && isset($param['order'])) {
+            $model = $model->order($param['column'], $param['order']);
+        }
         $select = $model->select();
 
         $data = [

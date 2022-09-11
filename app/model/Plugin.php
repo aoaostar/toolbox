@@ -30,7 +30,12 @@ class Plugin extends Base
 {
     protected $json = ['config'];
 
-    protected $searchField = ['author', 'class', 'tag', 'title',];
+    protected $searchField = ['author', 'class', 'tag', 'title', 'alias'];
+
+    public static function onAfterRead(Model $model)
+    {
+        $model->logo = "/$model->alias/logo.png";
+    }
 
     public static function getByAlias($alias = '')
     {
@@ -60,8 +65,8 @@ class Plugin extends Base
     public static function all($param)
     {
         $where = [];
-        if (!empty($param['categoryId'])) {
-            $where[] = ['category_id', '=', $param['categoryId']];
+        if (!empty($param['category_id'])) {
+            $where[] = ['category_id', '=', $param['category_id']];
         }
 
         if (!empty($param['enable'])) {
@@ -69,7 +74,7 @@ class Plugin extends Base
         }
 
         $selects = (new Plugin)->pagination($param, $where);
-        $selects['items']->load(['category']);
+        $selects['items']->hidden(['config', 'class'])->load(['category']);
 
         if (!empty($param['star']) && $param['star'] == 1) {
             $user = get_user();

@@ -5,7 +5,6 @@ namespace app\controller;
 
 
 use app\BaseController;
-use think\facade\View;
 
 class Admin extends BaseController
 {

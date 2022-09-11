@@ -89,7 +89,6 @@ class Install extends Base
     public function init_data()
     {
         try {
-
             $filename = app()->getRootPath() . 'install.sql';
             if (!is_file($filename)) {
                 throw new Exception('数据库 install.sql 文件不存在');
@@ -107,6 +106,8 @@ class Install extends Base
         } catch (\Exception $e) {
             return msg('error', $e->getMessage());
         }
+        //重置secret_key
+        config_set('global.secret_key', md5(uniqid()));
         return msg();
     }
 
@@ -114,17 +115,20 @@ class Install extends Base
     {
         $params = Request::param();
         $rules = [
-            'auth_path' => 'require|alphaDash',
-            'client_id' => 'require|alphaNum',
-            'client_secret' => 'require|alphaNum',
-            'username' => 'require',
+            'github.client_id' => 'require|alphaNum',
+            'github.client_secret' => 'require|alphaNum',
         ];
         $validate = Validate::rule($rules);
         if (!$validate->check($params)) {
             return msg('error', $validate->getError());
         }
         foreach (array_keys($rules) as $v) {
-            if (!config_set("oauth.$v", $params[$v])) {
+            $keys = explode('.', $v);
+            $value = $params;
+            foreach ($keys as $key){
+                $value = $value[$key];
+            }
+            if (!config_set("oauth.$v", $value)) {
                 return msg('error', "[$v]保存失败");
             }
         }

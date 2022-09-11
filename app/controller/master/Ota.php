@@ -8,6 +8,7 @@ use app\controller\Base;
 use app\lib\ExecSQL;
 use app\model\Migration;
 use think\facade\Request;
+use think\facade\Session;
 
 class Ota extends Base
 {
@@ -64,16 +65,20 @@ class Ota extends Base
         }
         $tmpFilename = app()->getRuntimePath() . '/tmp/' . uniqid() . '.zip';
         if (!file_exists(dirname($tmpFilename))) {
-            mkdir(dirname($tmpFilename), 0777, true);
+            mkdir(dirname($tmpFilename), 0755, true);
         }
-        if (!file_put_contents($tmpFilename, $get)) {
-            return msg('error', '保存文件失败，请检查是否有写入权限');
+        try {
+            if (!file_put_contents($tmpFilename, $get)) {
+                return msg('error', '保存文件失败，请检查是否有写入权限');
+            }
+            $rootPath = app()->getRootPath();
+            if (!unzip($tmpFilename, $rootPath)) {
+                return msg('error', '解压压缩包失败');
+            }
+            return msg('ok', '资源包解压成功', $release->data);
+        } finally {
+            @unlink($tmpFilename);
         }
-        $rootPath = app()->getRootPath();
-        if (!unzip($tmpFilename, $rootPath)) {
-            return msg('error', '解压压缩包失败');
-        }
-        return msg('ok', '资源包解压成功', $release->data);
     }
 
     public function updateDatabase()

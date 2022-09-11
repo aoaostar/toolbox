@@ -5,7 +5,19 @@ use think\facade\Route;
 
 
 Route::group('api', function () {
-    Route::any('plugins', 'plugin/all');
-    Route::any('plugin/star', 'plugin/star');
-    Route::any('categories', 'category/all');
+    Route::any('plugins', 'Plugin/all');
+    Route::any('categories', 'Category/all');
+    Route::any('record', 'Plugin/record');
 })->prefix('api.');
+
+
+
+Route::group('api', function () {
+    Route::any('plugin/star', 'Plugin/star');
+    Route::get('mine', 'User/get');
+    Route::get('user', 'User/get');
+    Route::post('user', 'User/update');
+})->prefix('api.')
+    ->middleware(\app\middleware\Auth::class);
+
+

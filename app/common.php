@@ -1,7 +1,10 @@
 <?php
 // 应用公共文件
+use app\lib\Jwt;
 use app\model\User;
+use think\facade\Request;
 use think\facade\Session;
+use think\helper\Str;
 
 require dirname(__DIR__) . "/plugin/common.php";
 function template_path_get(): string
@@ -21,20 +24,27 @@ function msg($status = "ok", $message = "success", $data = [])
 function is_login()
 {
     $user = get_user();
-    return $user !== null && !empty($user->id);
+    return $user !== null && !empty($user->id) && $user->isExists();
 }
 
 function get_user()
 {
     $user = Session::get("user");
+    if (empty($user)) {
+        $access_token = Request::header('Authorization');
+        if (!empty($access_token)) {
+            $resp = (new Jwt())->validate_token($access_token);
+            $user = (object)$resp['data'];
+        }
+    }
 
-    if (!empty($user)) {
+    if (!empty($user->id)) {
         $user = User::where('id', $user->id)->cache(60)->findOrEmpty();
         if (!$user->isEmpty()) {
             return $user;
         }
     }
-    return null;
+    return User::visitor();
 }
 
 function get_username()
@@ -42,20 +52,17 @@ function get_username()
     return get_user()->login;
 }
 
-function is_admin()
+function is_admin($user = null)
 {
-
-    $user = get_user();
-
-    $username = config_get('oauth.username');
-    return $user !== null && !empty($user->username) && $user->username === $username;
+    $user = $user ?? get_user();
+    return $user !== null && !empty($user->id) && $user->id === 1 && $user->isExists();
 }
 
 
 function get_master_path($path = '')
 {
     $path = trim($path, '\\//');
-    $adminPath = trim(config_get('oauth.admin_path'), '\\//');
+    $adminPath = trim(config_get('global.admin_path'), '\\//');
     if (!empty($path)) {
         $adminPath .= "/$path";
     }
@@ -236,7 +243,7 @@ function tree_relative($dir)
 function copy_dir($src, $target)
 {
     if (!is_dir($target)) {
-        mkdir($target, 0777, true);
+        mkdir($target, 0755, true);
     }
     foreach (glob($src . '/*') as $filename) {
         $targetFilename = $target . '/' . basename($filename);
@@ -409,10 +416,51 @@ if (!function_exists('client_ip')) {
     }
 }
 
-if (!function_exists('rand_ip')){
+if (!function_exists('rand_ip')) {
 
     function rand_ip()
     {
         return mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255);
+    }
+}
+
+if (!function_exists('get_content_type')) {
+
+    function get_content_type($filename)
+    {
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        switch ($extension) {
+            case 'css':
+                $mime_type = 'text/css';
+                break;
+            case 'js':
+                $mime_type = 'application/javascript';
+                break;
+            default:
+                $f_open = finfo_open(FILEINFO_MIME_TYPE);
+                $mime_type = finfo_file($f_open, $filename);
+                finfo_close($f_open);
+        }
+
+        return $mime_type;
+    }
+}
+
+
+if (!function_exists('get_enabled_oauth_mode')) {
+
+    function get_enabled_oauth_mode()
+    {
+        //获取oauth启用信息
+        $oauth = config_get('oauth.');
+        $arr = [];
+        foreach ($oauth as $k => $v) {
+            if (Str::endsWith($k, '.enable') && substr_count($k, '.') === 1) {
+                if ($v == 1) {
+                    $arr[] = substr($k, 0, strpos($k, '.'));
+                }
+            }
+        }
+        return $arr;
     }
 }

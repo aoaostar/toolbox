@@ -7,6 +7,7 @@ namespace app\controller\master;
 use app\controller\Base;
 use think\facade\Cache;
 use think\facade\Request;
+use think\Collection;
 
 class Cloud extends Base
 {
@@ -49,32 +50,51 @@ class Cloud extends Base
 
     public function plugins()
     {
-        $data = Cache::get(__METHOD__);
-        if (!empty($data)) {
-            return msg("ok", "success", $data);
-        }
-        $res = aoaostar_get($this->PLUGINS_API, $this->HEADERS);
-        $json = json_decode($res);
-        if (empty($json) || empty($json->data)) {
-            if (!empty($json->message)) {
-                return msg("error", $json->message);
+        $json = Cache::get(__METHOD__);
+        if (empty($json)) {
+            $res = aoaostar_get($this->PLUGINS_API, $this->HEADERS);
+            $json = json_decode($res);
+            if (empty($json) || empty($json->data)) {
+                if (!empty($json->message)) {
+                    return msg("error", $json->message);
+                }
+                return msg("error", '连接云中心失败，请检查网络连通性是否正常');
             }
-            return msg("error", '连接云中心失败，请检查网络连通性是否正常');
+            Cache::set(__METHOD__, $json);
         }
-        $classes = [];
-        foreach ($json->data->items as $v) {
-            $classes[] = $v->class;
-        }
-        $plugins = \app\model\Plugin::field('class,version')->select();
+        $plugins = \app\model\Plugin::field('id,class,version')->select();
 
-        foreach ($json->data->items as $v) {
+        foreach ($json->data->items as &$v) {
             $v->current_version = null;
             $first = $plugins->where('class', $v->class)->first();
             if (!empty($first)) {
                 $v->current_version = $first->version;
+                $v->current_plugin_id = $first->id;
+            }
+            $v = (array)$v;
+        }
+        unset($v);
+        $collection = new Collection($json->data->items);
+
+        $params = request()->param();
+
+        foreach (['title' => 'like', 'category_id' => '='] as $k => $v) {
+            if (!empty($params[$k])) {
+                $collection = $collection->where($k, $v, $params[$k]);
             }
         }
-        Cache::set(__METHOD__, $json->data);
+        if (!empty($params['need_update']) && $params['need_update']) {
+            $collection = $collection->filter(function ($v) {
+                return !empty($v['current_version']) && $v['current_version'] !== $v['version'];
+            });
+        }
+        $json->data->total = $collection->count();
+        $collection = $collection->order('update_time', 'desc');
+        if (!empty($params['page']) && !empty($params['limit'])) {
+            $collection = $collection->slice(($params['page'] - 1) * $params['limit'], $params['limit']);
+        }
+        $json->data->items = array_values($collection->toArray());
+
         return msg("ok", "success", $json->data);
     }
 

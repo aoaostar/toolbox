@@ -2,7 +2,9 @@
 ﻿
 {block name="title"}{$plugin.title} - {$app.title}{/block}
 ﻿
-﻿
+﻿{block name="head"}
+<script src="/{$plugin.alias}/static/app.js"></script>
+{/block}
 {block name="main"}
 <div class="container mx-auto" id="app">
     <div class="card lg:card-side bordered shadow-lg">

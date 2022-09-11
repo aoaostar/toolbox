@@ -203,30 +203,17 @@
                         </div>
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text">用户名</span>
+                                <span class="label-text">Github client_id</span>
                             </label>
-                            <input type="text" v-model="oauth.username" placeholder="请输入用户名"
+                            <input type="text" v-model="oauth.github.client_id" placeholder="请输入Github client_id"
                                    class="input input-accent input-bordered">
                         </div>
                         <div class="form-control">
                             <label class="label">
-                                <span class="label-text">client_id</span>
+                                <span class="label-text">Github client_secret</span>
                             </label>
-                            <input type="text" v-model="oauth.client_id" placeholder="请输入client_id"
-                                   class="input input-accent input-bordered">
-                        </div>
-                        <div class="form-control">
-                            <label class="label">
-                                <span class="label-text">client_secret</span>
-                            </label>
-                            <input type="text" v-model="oauth.client_secret" placeholder="请输入client_secret"
-                                   class="input input-accent input-bordered">
-                        </div>
-                        <div class="form-control">
-                            <label class="label">
-                                <span class="label-text">后台路径</span>
-                            </label>
-                            <input type="text" v-model="oauth.auth_path" placeholder="请输入后台路径"
+                            <input type="text" v-model="oauth.github.client_secret"
+                                   placeholder="请输入Github client_secret"
                                    class="input input-accent input-bordered">
                         </div>
                     </div>
@@ -265,11 +252,11 @@
                 password: '',
             },
             oauth: {
-                callback_url: "{:url('Auth/callback',[],false,true)}",
-                username: '',
-                client_id: '',
-                client_secret: '',
-                auth_path: 'admin',
+                callback_url: "{:url('auth/callback',['mode'=>'github'],false,true)}",
+                github: {
+                    client_id: '',
+                    client_secret: '',
+                }
             },
         },
         watch: {
@@ -292,26 +279,20 @@
                     case 3:
                         loading = $message.loading('正在完成数据库安装')
                         install_api.database(this.database).then(res => {
-                            if (res.status === 'ok') {
-                                install_api.init_data().then(res2 => {
-                                    if (res2.status !== 'ok') {
-                                        this.step = oldVal
-                                        this.status[newVal] = false
-                                    }
-                                })
-                            } else {
+                            install_api.init_data().catch(e => {
                                 this.step = oldVal
                                 this.status[newVal] = false
-                            }
+                            })
+                        }).catch(e => {
+                            this.step = oldVal
+                            this.status[newVal] = false
                         }).finally(() => loading.close())
                         break
                     case 4:
                         loading = $message.loading('正在完成OAUTH信息配置')
-                        install_api.oauth(this.oauth).then(res => {
-                            if (res.status !== 'ok') {
-                                this.step = oldVal
-                                this.status[newVal] = false
-                            }
+                        install_api.oauth(this.oauth).catch(e => {
+                            this.step = oldVal
+                            this.status[newVal] = false
                         }).finally(() => loading.close())
                         break
                 }

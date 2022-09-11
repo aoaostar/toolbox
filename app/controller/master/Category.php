@@ -25,7 +25,6 @@ class Category extends Base
         }
 
         $select = (new \app\model\Category)->pagination($params);
-
         return msg("ok", "success", $select);
     }
 
@@ -70,7 +69,7 @@ class Category extends Base
 
         $validate = Validate::rule([
             'id' => 'require',
-            'title|分类标题' => 'require|chsAlphaNum',
+            'title|分类标题' => 'chsAlphaNum',
             'weight|权重' => 'integer',
         ]);
         if (!$validate->check($params)) {
@@ -83,6 +82,7 @@ class Category extends Base
         ])->data($params)->save();
         return msg('ok', 'success', $model);
     }
+
     public function delete()
     {
         $params = Request::param();
@@ -94,8 +94,8 @@ class Category extends Base
 
             return msg('error', $validate->getError());
         }
-        $delete = \app\model\Category::where('id',$params['id'])->delete();
-        if ($delete){
+        $delete = \app\model\Category::where('id', $params['id'])->delete();
+        if ($delete) {
             return msg('ok', '删除失败');
         }
         return msg('ok', 'success');

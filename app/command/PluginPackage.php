@@ -34,7 +34,7 @@ class PluginPackage extends Command
             $zip = new  ZipArchive();
             $filename = $rootPath . 'output/' . $space . DIRECTORY_SEPARATOR . basename($plugin) . '.zip';
             if (!is_dir(dirname($filename))) {
-                mkdir(dirname($filename), 0777, true);
+                mkdir(dirname($filename), 0755, true);
             }
             if ($zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
 

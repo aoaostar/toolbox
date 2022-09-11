@@ -24,7 +24,10 @@
     "ext-json": "*",
     "ext-zip": "*",
     "ext-pdo": "*",
-    "ext-iconv": "*"
+    "ext-iconv": "*",
+    "ext-openssl": "*",
+    "firebase/php-jwt": "^6.2",
+    "ext-fileinfo": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

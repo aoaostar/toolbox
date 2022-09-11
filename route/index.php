@@ -6,6 +6,13 @@ Route::any('/stars', 'Index/stars')
     ->middleware(\app\middleware\Auth::class)
     ->middleware(\app\middleware\View::class);
 
+
+Route::group('user', function () {
+    Route::get('/', 'index');
+})->prefix('User/')
+    ->middleware(\app\middleware\Auth::class)
+    ->middleware(\app\middleware\View::class);
+
 Route::get('/install/database', 'Install/database');
 Route::get('/install/init_data', 'Install/init_data');
 Route::get('/install/oauth', 'Install/oauth');

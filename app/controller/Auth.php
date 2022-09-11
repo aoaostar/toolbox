@@ -4,64 +4,118 @@
 namespace app\controller;
 
 
+use app\lib\oauth\OAuth;
 use app\model\User;
 use think\facade\Request;
 use think\facade\Session;
+use think\facade\View;
+use think\helper\Str;
 
 class Auth extends Base
 {
+    private $instance = OAuth::class;
+    private $mode;
+    private $user;
 
-    public function login()
+    protected function initialize()
     {
-        return view();
+        if (in_array(Request::action(), ['oauth', 'callback'])) {
+            $this->mode = mb_strtolower(Request::param('mode', 'github'));
+            if (!in_array($this->mode, get_enabled_oauth_mode())) {
+                abort(400, '不支持该认证方式 ' . Str::studly($this->mode));
+            }
+            $class = '\\app\\lib\\oauth\\impl\\' . Str::studly($this->mode);
+            if (!class_exists($class)) {
+                abort(400, '不支持该认证方式 ' . Str::studly($this->mode));
+            }
+            $this->user = get_user();
+            $this->instance = new $class((object)config_get("oauth.$this->mode."), (object)Request::param());
+        }
     }
+
 
     public function oauth()
     {
-        $url = (string)url('/oauth/callback', [], '', true);
-        return redirect('https://github.com/login/oauth/authorize?client_id=' . config_get('oauth.client_id') . '&redirect_uri=' . $url);
+        //绑定账号
+        if (Request::param('action') === 'bind') {
+            $this->user = get_user();
+            if (!empty($this->user->oauth[$this->mode])) {
+                return $this->callback_view('error', "已绑定，请勿重复绑定");
+            }
+            Session::set('BindAuth', true);
+        }
+        return $this->instance->oauth();
     }
 
     public function callback()
     {
+        $bind = Session::pull('BindAuth');
 
-        $code = Request::param("code");
-        if (empty($code)) {
-            return redirect("/auth/login");
-        }
-        $url = 'https://github.com/login/oauth/access_token';
-        $arr = [
-            'client_id' => config_get('oauth.client_id'),
-            'client_secret' => config_get('oauth.client_secret'),
-            'code' => $code,
-        ];
+        $user = (object)$this->instance->callback();
 
-        $res = aoaostar_post($url, $arr, [
-            'Accept: application/json',
-        ]);
-        $json_decode = json_decode($res);
-        if (!empty($json_decode) && !empty($json_decode->access_token)) {
-            $aoaostar_get = aoaostar_get('https://api.github.com/user', [
-                "Authorization: token $json_decode->access_token"
-            ]);
-
-            $json_decode = json_decode($aoaostar_get);
-            if (!empty($json_decode) && !empty($json_decode->login)) {
-                $model = User::where('id', $json_decode->id)->findOrEmpty();
-                if ($model->isEmpty()) {
-                    $model = new User();
-                    $model->id = $json_decode->id;
-                    $model->avatar_url = $json_decode->avatar_url;
-                    $model->stars = '[]';
+        if (!empty($user) && !empty($user->id)) {
+            if ($bind === true) {
+                $model = User::json(['oauth'])
+                    ->where("oauth->$this->mode", $user->id)
+                    ->setFieldType(["oauth->$this->mode" => 'int'])
+                    ->findOrEmpty();
+                if (!$model->isExists()) {
+                    $this->user->oauth = array_merge((array)$this->user->oauth, [
+                        $this->mode => $user->id,
+                    ]);
+                    $this->user->save();
+                    return $this->callback_view('ok', "绑定成功");
+                } else {
+                    return $this->callback_view('error', "绑定失败，该账号已绑定，请联系管理员进行解绑后方可再次绑定");
                 }
-                $model->update_time = format_date();
-                $model->username = $json_decode->login;
-                $model->save();
-                Session::set('user', $model);
-                return redirect("/");
             }
+            $model = User::json(['oauth'])
+                ->where("oauth->$this->mode", $user->id)
+                ->setFieldType(["oauth->$this->mode" => 'int'])
+                ->findOrEmpty();
+            if ($model->isEmpty()) {
+                $model = new User();
+                $model->oauth = array_merge((array)$model->oauth, [
+                    $this->mode => $user->id,
+                ]);
+                $model->avatar = $user->avatar;
+                $model->ip = client_ip();
+                $model->stars = [];
+                if (User::where('username', 'aoaostar')->findOrEmpty()->isExists()) {
+                    $user->username .= '_' . uniqid();
+                }
+                $model->username = $user->username;
+            }
+            $model->update_time = format_date();
+            $model->save();
+            $instance = (new \app\lib\Jwt());
+            $jwt = $instance->generate_token($model->id, $model);
+            Session::set('user', $model);
+            return $this->callback_view('ok', "登录成功", [
+                'access_token' => $jwt,
+                'expire' => $instance->getExpire(),
+            ]);
         }
-        return abort(500, '登录超时，请重试');
+        return $this->callback_view('error', "登录失败，请重试");
+    }
+
+    private function callback_view($status, $message, $data = [])
+    {
+
+        View::assign('data', [
+            'status' => $status,
+            'message' => $message,
+            'data' => $data,
+        ]);
+        return view('auth/callback');
+    }
+
+    public function login()
+    {
+        if (is_login()) {
+            return redirect('/user');
+        }
+        return view();
     }
 
     public function logout()

@@ -6,7 +6,6 @@ namespace app\controller\master;
 use app\BaseController;
 use think\facade\Db;
 use think\facade\Request;
-use think\facade\Session;
 use think\facade\Validate;
 
 class Plugin extends BaseController
@@ -20,7 +19,6 @@ class Plugin extends BaseController
             'page' => 'integer',
             'limit' => 'integer',
             'categoryId' => 'integer',
-            'class' => 'is_legal_plugin_class',
         ]);
         if (!$validate->check($params)) {
 
@@ -51,6 +49,7 @@ class Plugin extends BaseController
 
     public function update()
     {
+
         $params = Request::param();
 
         $validate = Validate::rule([
@@ -67,6 +66,7 @@ class Plugin extends BaseController
 
             return msg('error', $validate->getError());
         }
+
         $plugin = \app\model\Plugin::get($params['id']);
 
         $plugin->allowField([
@@ -74,7 +74,7 @@ class Plugin extends BaseController
             'class',
             'config',
             'desc',
-            'logo',
+//            'logo',
             'alias',
             'version',
             'title',
@@ -92,7 +92,6 @@ class Plugin extends BaseController
         $validate = Validate::rule([
             'title|插件标题' => 'require',
             'alias|路由别名' => 'require|unique:plugin',
-            'logo|插件logo' => 'require',
             'desc|插件描述' => 'require',
             'config|插件配置' => 'is_json',
             'class|插件类名' => 'require|unique:plugin|is_legal_plugin_class',
@@ -112,7 +111,6 @@ class Plugin extends BaseController
             'class',
             'config',
             'desc',
-            'logo',
             'alias',
             'version',
             'title',
@@ -131,24 +129,22 @@ class Plugin extends BaseController
             'id' => 'require|integer',
         ]);
         if (!$validate->check($params)) {
-
             return msg('error', $validate->getError());
+        }
+        $plugin = \app\model\Plugin::get($params['id']);
+        if ($plugin->isEmpty()) {
+            return msg('error', '该插件不存在');
         }
         Db::startTrans();
         try {
-            $plugin = \app\model\Plugin::get($params['id']);
-            $classPath = plugin_path_get() . "/$plugin->class/Install.php";
+            $classPath = plugin_path_get($plugin->class) . "/Install.php";
             if (file_exists($classPath)) {
                 require $classPath;
-                $class = "plugin\\$plugin->class\\Install";
+                $class = "\\plugin\\$plugin->class\\Install";
                 if (class_exists($class)) {
                     $uninstall = new $class();
                     $uninstall->UnInstall($plugin);
                 }
-            }
-            $logoFile = plugin_logo_path_get($plugin->class);
-            if (is_file($logoFile)){
-                unlink($logoFile);
             }
             Db::name('plugin')->delete($params['id']);
             if (!empty($plugin->class)) {
@@ -179,5 +175,38 @@ class Plugin extends BaseController
         $zipFilepath = $plugin->getZipFilepath();
         $uploadedFile->move(dirname($zipFilepath), basename($zipFilepath));
         return $plugin->install();
+    }
+
+    public function update_logo()
+    {
+
+        $params = Request::param();
+
+        $params['logo'] = Request::file('logo');
+
+        $validate = Validate::rule([
+            'id' => 'requireWithout:class|integer',
+            'class|插件类名' => 'requireWithout:id|unique:plugin|is_legal_plugin_class',
+            'logo' => 'require|fileExt:png,jpg|fileSize:5242880|fileMime:image/png,image/jpeg',
+        ]);
+
+        if (!$validate->check($params)) {
+
+            return msg('error', $validate->getError());
+        }
+
+
+        if (!empty($params['id'])) {
+            $plugin = \app\model\Plugin::get($params['id']);
+            $params['class'] = $plugin->class;
+        }
+
+        $pluginPath = plugin_path_get($params['class']);
+        if (!is_dir($pluginPath)) {
+            mkdir($pluginPath, 0755, true);
+        }
+        $params['logo']->move($pluginPath, 'logo.png');
+
+        return msg();
     }
 }

@@ -31,13 +31,12 @@
                 <div class=" flex flex-row">
                     <div class="avatar w-1/4">
                         <div class="rounded-btn w-20 h-20">
-                            <img :src="item.logo" alt="">
+                            <img :src="`${item.logo}?v=${item.version}`" alt="">
                         </div>
                     </div>
                     <div class="ml-4 w-3/4 flex justify-center flex-col">
                         <h2 class="card-title truncate block">{{item.title}}</h2>
                         <div class="flex">
-                            {if(is_login())}
                             <button v-if="user.stars.indexOf(item.alias)===-1" class="btn btn-ghost btn-sm rounded-btn"
                                     @click="star(item.alias)">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -56,17 +55,6 @@
                                 </svg>
                                 UnStar
                             </button>
-                            {else}
-                            <a class="btn btn-ghost btn-sm rounded-btn"
-                               href="/auth/login">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     class="inline-block w-5 mr-2 stroke-current">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                </svg>
-                                Star
-                            </a>
-                            {/if}
                             <button @click="categoryId=item.category.id" class="btn btn-ghost btn-sm rounded-btn"
                                     v-if="item.category!==null">
                                 [{{item.category.title}}]
@@ -94,11 +82,11 @@
     new Vue({
         el: '#app',
         data: {
-            categoryId: "{:request()->get('categoryId')}",
+            categoryId: "{:request()->get('category_id')}",
             plugins: [],
             currentPlugins: [],
             keywords: '',
-            user: JSON.parse('{if(is_login())}{$user|raw}{else}{literal}{}{/literal}{/if}'),
+            user: JSON.parse('{$user|raw}'),
         },
         watch: {
             categoryId(newVal) {
@@ -119,7 +107,8 @@
             },
             keywords(newVal) {
                 this.currentPlugins = this.plugins.filter(v => {
-                    return v.title.toLowerCase().indexOf(newVal.trim().toLowerCase()) !== -1
+                    const keywords = newVal.trim().toLowerCase()
+                    return v.title.toLowerCase().includes(keywords) || v.alias.toLowerCase().includes(keywords)
                 })
             }
         },
@@ -129,16 +118,12 @@
         methods: {
             getPlugins(categoryId) {
                 return plugins_get(categoryId, IS_STAR).then(res => {
-                    if (res.status === 'ok') {
-                        this.plugins = res.data.items
-                    }
+                    this.plugins = res.data.items
                 })
             },
             star(pluginAlias, action = 'add') {
                 return star(pluginAlias, action).then(res => {
-                    if (res.status === 'ok') {
-                        this.user.stars = res.data;
-                    }
+                    this.user.stars = res.data;
                 })
             }
         },

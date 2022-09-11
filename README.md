@@ -12,8 +12,11 @@
 
 
 ### 🍹 演示图
-
 ![](docs/images/view_1.png)
+![](docs/images/view_2.png)
+![](docs/images/view_4.png)
+![](docs/images/view_3.gif)
+
 ## 🎑 说明
 > 严禁用于非法用途  
 
@@ -80,10 +83,11 @@ location / {
   RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]
 </IfModule>
 ```
+
 #### 🍓 鸣谢
-* vue
+
 * thinkphp
 * daisyui
 * tailwindcss
-* layui
-* layuimini
+* naive UI
+* naive UI admin

@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="keywords" content="{$plugin.title},{$app.keywords}">
     <meta name="description" content="{$plugin.desc}">
-    <meta name="author" content="Pluto" />
+    <meta name="author" content="Pluto"/>
 
-    <link href="{:cdnjs_cdn()}/daisyui/2.2.2/full.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{:cdnjs_cdn()}/daisyui/2.11.0/full.min.css" rel="stylesheet" type="text/css"/>
     <link href="{:cdnjs_cdn()}/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" type="text/css"/>
     <script src="{:cdnjs_cdn()}/limonte-sweetalert2/11.4.4/sweetalert2.all.min.js"></script>
     <script src="{:cdnjs_cdn()}/vue/2.6.14/vue.min.js"></script>
@@ -23,11 +23,31 @@
 <body>
 <div class="site-main">
     {include file="layout/header" /}
-    <div class="container mx-auto my-4" >
+    <div class="container mx-auto my-4" id="plugin-info">
         <div class="card lg:card-side bordered shadow-lg flex-row">
             <img class="w-32 h-32" src="{$plugin.logo}">
             <div class="card-body">
-                <h2 class="card-title">{$plugin.title}</h2>
+                <div class="card-title flex-wrap">
+                    <h2>{$plugin.title}</h2>
+                    <button v-if="user.stars.indexOf('{$plugin.alias}')===-1" class="btn btn-ghost btn-sm rounded-btn"
+                            @click="star('{$plugin.alias}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             class="inline-block w-5 mr-2 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        Star
+                    </button>
+                    <button v-else class="btn btn-ghost btn-sm rounded-btn" @click="star('{$plugin.alias}','remove')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             class="inline-block w-5 mr-2 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  fill="#d63031"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        UnStar
+                    </button>
+                </div>
                 <p>{$plugin.desc}</p>
             </div>
         </div>
@@ -37,6 +57,24 @@
 <div class="site-footer">
     {include file="layout/footer" /}
 </div>
-<script src="{:npm_cdn()}/theme-change@2.0.2/index.js"></script>
+<script src="/static/lib/theme-change/2.0.2/index.js"></script>
+<script>
+    new Vue({
+        el: '#plugin-info',
+        data: {
+            user: JSON.parse('{$user|raw}')
+        },
+        methods: {
+            star(pluginAlias, action = 'add') {
+                return star(pluginAlias, action).then(res => {
+                    if (res.status === 'ok') {
+                        this.user.stars = res.data;
+                    }
+                })
+            }
+        }
+    })
+</script>
+{include file="layout/plugin_record" /}
 </body>
 </html>

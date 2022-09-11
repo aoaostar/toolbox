@@ -1,7 +1,9 @@
 const plugins_get = (categoryId, star) => {
     return httpGet('/api/plugins', {
-        categoryId: categoryId,
+        category_id: categoryId,
         star: star,
+        column: 'weight',
+        order: 'desc',
     })
 }
 const star = (pluginAlias, action = 'add') => {
@@ -20,4 +22,8 @@ const install_api = {
     init_data: (params) => {
         return httpPost('/install/init_data', params)
     }
+}
+
+const user_update = (params) => {
+    return httpPost('/api/user', params)
 }

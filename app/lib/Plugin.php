@@ -4,8 +4,9 @@
 namespace app\lib;
 
 
-use think\Exception;
 
+
+use Exception;
 
 /**
  * 实例化后需要保存zip文件到 $zipFilepath
@@ -34,7 +35,7 @@ class Plugin
         $this->tmpDirPath = $this->tmpPath . $this->uniqid . '/';;
 
         if (!file_exists($this->tmpPath)) {
-            mkdir($this->tmpPath, 0777, true);
+            mkdir($this->tmpPath, 0755, true);
         }
 
     }
@@ -78,7 +79,7 @@ class Plugin
     {
 
         if (!file_exists(dirname($this->pluginPath))) {
-            mkdir(dirname($this->pluginPath), 0777, true);
+            mkdir(dirname($this->pluginPath), 0755, true);
         }
         del_tree($this->pluginPath);
     }
@@ -113,7 +114,6 @@ class Plugin
                 $model->title = '插件' . $this->uniqid;
                 $model->alias = $this->uniqid;
                 $model->class = $this->pluginClass;
-                $model->logo = '/static/images/plugin_default.png';
                 $model->desc = '暂无描述';
                 $model->version = 'v1.0';
                 $model->config = [];
@@ -121,12 +121,9 @@ class Plugin
                 $model->request_count = 0;
                 $model->template = 'default';
             }
-            if (is_file($this->pluginPath . '/logo.png')) {
-                $logoFilename = plugin_logo_path_get($this->pluginClass);
-                copy($this->pluginPath . '/logo.png', $logoFilename);
-                $model->logo = plugin_logo_relative_path_get($this->pluginClass);
-            }
             $install->Install($model);
+            $model->logo = "/$model->alias/logo.png";
+
             //判断alias是否重复
 
             $model2 = \app\model\Plugin::getByAlias($model->alias);
