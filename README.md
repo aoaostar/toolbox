@@ -84,6 +84,10 @@ location / {
 </IfModule>
 ```
 
+### 😊 donate
+
+![donate](https://www.aoaostar.com/images/donate.png)
+
 #### 🍓 鸣谢
 
 * thinkphp
