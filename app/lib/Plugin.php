@@ -4,8 +4,6 @@
 namespace app\lib;
 
 
-
-
 use Exception;
 
 /**
@@ -119,6 +117,8 @@ class Plugin
                 $model->config = [];
                 $model->category_id = 0;
                 $model->request_count = 0;
+                $model->enable = 1;
+                $model->weight = 0;
                 $model->template = 'default';
             }
             $install->Install($model);
