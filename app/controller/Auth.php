@@ -81,7 +81,7 @@ class Auth extends Base
                 $model->avatar = $user->avatar;
                 $model->ip = client_ip();
                 $model->stars = [];
-                if (User::where('username', 'aoaostar')->findOrEmpty()->isExists()) {
+                if (User::getByUsername($user->username)->isExists()) {
                     $user->username .= '_' . uniqid();
                 }
                 $model->username = $user->username;

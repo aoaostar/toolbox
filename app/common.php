@@ -39,8 +39,8 @@ function get_user()
     }
 
     if (!empty($user->id)) {
-        $user = User::where('id', $user->id)->cache(60)->findOrEmpty();
-        if (!$user->isEmpty()) {
+        $user = User::get($user->id);
+        if ($user->isExists()) {
             return $user;
         }
     }
@@ -49,7 +49,7 @@ function get_user()
 
 function get_username()
 {
-    return get_user()->login;
+    return get_user()->username;
 }
 
 function is_admin($user = null)

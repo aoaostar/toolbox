@@ -51,7 +51,7 @@ function plugin_relative_path_get($alias = '')
 function plugin_class_get($alias = '')
 {
     $model = plugin_info_get($alias);
-    if ($model->isEmpty()) {
+    if (!$model->isExists()) {
         return '';
     }
     return $model->class;
@@ -60,7 +60,7 @@ function plugin_class_get($alias = '')
 function plugin_config_get($alias = '')
 {
     $model = plugin_info_get($alias);
-    if ($model->isEmpty()) {
+    if (!$model->isExists()) {
         return null;
     }
     return $model->config;

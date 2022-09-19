@@ -1,5 +1,5 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app\model;
 
@@ -20,10 +20,18 @@ class Category extends Base
 
     public static function get($id)
     {
+        return self::where('id', $id)->with(['plugins'])->findOrEmpty();
+    }
 
-        $model = self::where('id', $id)->with(['plugins'])->findOrEmpty();
-
-        return $model;
+    public static function all($params = [])
+    {
+        $where = [];
+        foreach (['name', 'title'] as $v) {
+            if (!empty($params[$v])) {
+                $where[] = [$v, 'like', '%' . $params[$v] . '%'];
+            }
+        }
+        return self::where($where)->order('weight', 'desc')->select();
     }
 
     public function plugins()

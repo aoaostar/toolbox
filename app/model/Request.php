@@ -19,10 +19,7 @@ class Request extends Base
 
     public static function get($id)
     {
-
-        $model = self::where('id', $id)->findOrEmpty();
-
-        return $model;
+        return self::where('id', $id)->cache(true)->findOrEmpty();
     }
     public function plugin()
     {

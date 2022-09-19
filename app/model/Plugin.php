@@ -3,6 +3,7 @@ declare (strict_types=1);
 
 namespace app\model;
 
+use think\facade\Cache;
 use think\Model;
 
 
@@ -42,24 +43,21 @@ class Plugin extends Base
         if (empty($alias)) {
             $alias = plugin_alias_get();
         }
-        $model = self::where('alias', $alias)->with(['category'])->findOrEmpty();
-
-        return $model;
+        return Cache::remember(__METHOD__ . '__' . $alias, function () use ($alias) {
+            return self::where('alias', $alias)->with(['category'])->findOrEmpty();
+        });
     }
 
     public static function getByClass($class)
     {
-        $model = self::where('class', $class)->with(['category'])->findOrEmpty();
-
-        return $model;
+        return Cache::remember(__METHOD__ . '__' . $class, function () use ($class) {
+            return self::where('class', $class)->with(['category'])->findOrEmpty();
+        });
     }
 
     public static function get($id)
     {
-
-        $model = self::where('id', $id)->with(['category'])->findOrEmpty();
-
-        return $model;
+        return self::where('id', $id)->with(['category'])->withCache(true)->findOrEmpty();
     }
 
     public static function all($param)

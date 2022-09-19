@@ -52,10 +52,12 @@ class User extends Model
 
     public static function get($id)
     {
+        return User::where('id', $id)->cache(30)->findOrEmpty();
+    }
 
-        $model = User::where('id', $id)->findOrEmpty();
-
-        return $model;
+    public static function getByUsername($username)
+    {
+        return User::where('username', $username)->findOrEmpty();
     }
 
     public static function visitor()

@@ -5,6 +5,7 @@ namespace app\middleware;
 
 
 use app\model\Category;
+use think\facade\Cache;
 
 class View
 {
@@ -18,8 +19,9 @@ class View
     public function handle($request, \Closure $next)
     {
         $response = $next($request);
-        $categories = Category::order('weight', 'desc')->select();
-
+        $categories = Cache::remember(__METHOD__ . '__category', function () {
+            return Category::all();
+        });
         $get_user = get_user();
         $hidden = ['ip', 'update_time', 'oauth'];
         foreach ($hidden as $k) {

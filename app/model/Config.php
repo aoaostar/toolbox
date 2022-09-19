@@ -24,7 +24,7 @@ class Config extends Model
 
     public static function getByKey($key)
     {
-        $model = Config::cache(60);
+        $model = self::cache(true);
         if (str_ends_with($key, '.')) {
             $model = $model->where('key', 'like', "%$key%")->select();
         } else {

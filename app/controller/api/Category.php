@@ -12,16 +12,9 @@ class Category extends Base
 
     public function all()
     {
-        $param = Request::param();
-        $where = [];
-        if (!empty($param['name'])) {
-            $where[] = ["name", 'like', '%' . Request::param('name"') . '%'];
-        }
-        if (!empty($param['title'])) {
-            $where[] = ["title", 'like', '%' . Request::param('title"') . '%'];
-        }
+        $params = Request::param();
 
-        $select = \app\model\Category::where($where)->order('weight', 'desc')->select();
+        $select = \app\model\Category::all($params);
 
         return msg("ok", "success", $select);
     }

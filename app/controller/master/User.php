@@ -58,9 +58,9 @@ class User extends Base
             return msg('error', $validate->getError());
         }
         $plugin = \app\model\User::get($params['id']);
-        if (empty($params['stars'])){
+        if (empty($params['stars'])) {
             $params['stars'] = [];
-        }else{
+        } else {
             $params['stars'] = array_values($params['stars']);
         }
         $plugin->allowField([
@@ -68,6 +68,7 @@ class User extends Base
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }
+
     public function delete()
     {
         $params = Request::param();
@@ -79,8 +80,8 @@ class User extends Base
 
             return msg('error', $validate->getError());
         }
-        $delete = \app\model\User::where('id',$params['id'])->delete();
-        if ($delete){
+        $delete = \app\model\User::get($params['id'])->delete();
+        if ($delete) {
             return msg('ok', '删除失败');
         }
         return msg('ok', 'success');

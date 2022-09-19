@@ -24,7 +24,7 @@ class User extends Base
         if (!$validate->check($params)) {
             return msg('error', $validate->getError());
         }
-        if (\app\model\User::where('username', $params['username'])->findOrEmpty()->isExists()) {
+        if (\app\model\User::getByUsername($params['username'])->isExists()) {
             return msg('error', '该用户名已存在');
         }
         $model = get_user();

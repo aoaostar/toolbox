@@ -94,7 +94,7 @@ class Category extends Base
 
             return msg('error', $validate->getError());
         }
-        $delete = \app\model\Category::where('id', $params['id'])->delete();
+        $delete = \app\model\Category::get($params['id'])->delete();
         if ($delete) {
             return msg('ok', '删除失败');
         }
