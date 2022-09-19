@@ -52,7 +52,7 @@ class Gitee implements Oauth
                 return [
                     'id' => $json_decode->id,
                     'username' => $json_decode->login,
-                    'avatar' => $json_decode->avatar_url,
+                    'avatar' => $json_decode->avatar_url . '!avatar200',
                 ];
             }
         }
