@@ -58,12 +58,11 @@
 </div>
 
 <script>
+
     new Vue({
         el: '#app',
         data: {
             user: JSON.parse('{$user|raw}'),
-        },
-        created() {
         },
         methods: {
             updateUsername() {
@@ -78,6 +77,7 @@
                 }).finally(() => loading.close())
             },
             bind(action) {
+                const loading = $message.loading("正在绑定")
                 const opt = {
                     width: 700,
                     height: 700,
@@ -86,9 +86,17 @@
                 }
                 window.open(`{:url('auth/oauth')}/${action}/?action=bind`, 'Bind', `height=${opt.height}, width=${opt.width}, top=${opt.top}, left=${opt.left}, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no`)
 
-                // # 通过监听，父页面可以拿到子页面传递的token，父(前端页面)，子(小窗)
                 window.addEventListener('message', function (e) {
-                    window.location.reload()
+                    try {
+                        const data = e.data
+                        if (data?.status !== 'ok') {
+                            $message.error(data?.message || '绑定失败')
+                            return
+                        }
+                        window.location.reload()
+                    } finally {
+                        loading.close()
+                    }
                 }, false)
             }
         },
