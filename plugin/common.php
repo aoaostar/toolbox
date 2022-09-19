@@ -38,7 +38,7 @@ function plugin_template_path_get($pluginClass = ""): string
 }
 
 
-function plugin_info_get($alias = '')
+function plugin_info_get($alias = ''): \app\model\Plugin
 {
     return \app\model\Plugin::getByAlias($alias);
 }
