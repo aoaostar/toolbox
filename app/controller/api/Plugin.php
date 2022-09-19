@@ -26,6 +26,7 @@ class Plugin extends Base
 
             return msg('error', $validate->getError());
         }
+        $params['enable'] = 1;
         $plugins = \app\model\Plugin::all($params);
 
         return msg('ok', 'success', $plugins);
@@ -33,8 +34,6 @@ class Plugin extends Base
 
     public function star()
     {
-
-
         $alias = Request::param('alias');
         $action = Request::param('action', 'add');
 
@@ -73,7 +72,7 @@ class Plugin extends Base
             //多次请求不记录
             return msg('ok', 'Recorded');
         }
-        $plugin = \app\model\Plugin::where('id', $id)->field('id,request_count')->findOrEmpty();
+        $plugin = \app\model\Plugin::get($id);
         if ($plugin->isExists()) {
             $model = \app\model\Request::whereDay('create_time')->where('plugin_id', $plugin->id)->findOrEmpty();
             if (!$model->isExists()) {
