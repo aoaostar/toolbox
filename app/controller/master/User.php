@@ -51,7 +51,9 @@ class User extends Base
 
         $validate = Validate::rule([
             'id' => 'require',
+            'username|用户名' => 'require|max:26|graph',
             'stars' => 'is_json',
+            'oauth' => 'is_json',
         ]);
         if (!$validate->check($params)) {
 
@@ -64,7 +66,9 @@ class User extends Base
             $params['stars'] = array_values($params['stars']);
         }
         $plugin->allowField([
+            'username',
             'stars',
+            'oauth',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }

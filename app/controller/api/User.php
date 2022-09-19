@@ -18,7 +18,7 @@ class User extends Base
     public function update()
     {
         $validate = Validate::rule([
-            'username' => 'require|max:26|graph',
+            'username|用户名' => 'require|max:26|graph',
         ]);
         $params = request()->only(['username']);
         if (!$validate->check($params)) {
