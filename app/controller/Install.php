@@ -35,7 +35,7 @@ class Install extends Base
     {
         // 检查安装环境
         $requirements = [
-            'php_version' => PHP_VERSION >= 7.1,
+            'php_version' => PHP_VERSION >= '7.2.5',
             'pdo_mysql' => extension_loaded("pdo_mysql"),
 //            'zend_opcache' => extension_loaded("Zend OPcache"),
             'curl' => extension_loaded("curl"),
@@ -125,7 +125,7 @@ class Install extends Base
         foreach (array_keys($rules) as $v) {
             $keys = explode('.', $v);
             $value = $params;
-            foreach ($keys as $key){
+            foreach ($keys as $key) {
                 $value = $value[$key];
             }
             if (!config_set("oauth.$v", $value)) {

@@ -27,8 +27,8 @@
 
 ### 🎊 环境要求
 
-* `PHP` >= 7.1
-* `MySQL` >= 5.6
+* `PHP` >= 7.2.5
+* `MySQL` >= 5.7
 * `fileinfo`扩展
 * 使用`Redis`缓存需安装`Redis`扩展
 * 去除禁用函数`proc_open`、`putenv`、`shell_exec`、`proc_get_status`(必须是命令行的PHP版本，你装了多个PHP版本，命令行版本的PHP和你的网站配置的PHP可能不是同一个)
@@ -96,6 +96,7 @@ location / {
 #### 🍓 鸣谢
 
 * thinkphp
+* vuejs
 * daisyui
 * tailwindcss
 * naive UI
