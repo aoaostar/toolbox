@@ -8,10 +8,12 @@ Route::rule('api/:alias/[:method]', "Plugin/api")
     ])
     ->middleware(\app\middleware\PluginCheck::class);
 
+
+Route::get(':alias/logo', 'Plugin/logo');
+
 Route::group(':alias', function () {
 
     Route::get('/static/:path', 'static');
-    Route::get('/logo', 'logo');
     Route::get('/', 'index');
 
 })->prefix('Plugin/')
