@@ -78,16 +78,33 @@ class Cloud extends Base
 
         $params = request()->param();
 
-        foreach (['title' => 'like', 'category_id' => '='] as $k => $v) {
-            if (!empty($params[$k])) {
-                $collection = $collection->where($k, $v, $params[$k]);
-            }
-        }
         if (!empty($params['need_update']) && $params['need_update']) {
             $collection = $collection->filter(function ($v) {
                 return !empty($v['current_version']) && $v['current_version'] !== $v['version'];
             });
         }
+
+        foreach (['category_id' => '=',] as $k => $v) {
+            if (!empty($params[$k])) {
+                $collection = $collection->where($k, $v, $params[$k]);
+            }
+        }
+
+        $keywords = array_filter(['title', 'class', 'tag'], function ($v) use ($params) {
+            return !empty($params[$v]);
+        });
+
+        if (!empty($keywords)) {
+            $collection = $collection->filter(function ($item) use ($keywords, $params) {
+                foreach ($keywords as $k) {
+                    if (str_contains($item[$k], $params[$k])) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
+
         $json->data->total = $collection->count();
         $collection = $collection->order('update_time', 'desc');
         if (!empty($params['page']) && !empty($params['limit'])) {

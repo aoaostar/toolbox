@@ -12,15 +12,16 @@ class Base extends Model
 
     public function pagination($param, $where = [])
     {
+        $whereOr = [];
         foreach ($this->searchField as $v) {
             if (!empty($param[$v])) {
-                $where[] = [$v, 'like', '%' . $param[$v] . '%'];
+                $whereOr[] = [$v, 'like', '%' . $param[$v] . '%'];
             }
         }
         $model = new $this;
-        $total = $model->count();
 
-        $model = $model->where($where);
+        $model = $model->where($where)->whereOr($whereOr);
+        $total = $model->count();
         if (!empty($param['page'])) {
             $page = intval($param['page']);
             $model = $model->page($page);
