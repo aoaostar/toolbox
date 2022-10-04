@@ -16,14 +16,19 @@ function plugin_current_class_get($namespace)
     return str_replace('plugin\\', '', $namespace);
 }
 
-function plugin_path_get($class = '')
+function plugin_path_get($class = null)
 {
-    $class = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $class);
-    return app()->getRootPath() . "plugin/$class";
+    if (is_null($class)) {
+        $class = plugin_class_get();
+    }
+    return str_replace('\\', '/', app()->getRootPath() . "plugin/$class");
 }
 
 function plugin_logo_path_get($alias)
 {
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     return plugin_path_get(plugin_class_get($alias)) . "/logo.png";
 }
 
@@ -32,24 +37,32 @@ function plugin_logo_relative_path_get($alias)
     return $alias . '/logo.png';
 }
 
-function plugin_template_path_get($pluginClass = ""): string
+function plugin_template_path_get($class): string
 {
-    return plugin_path_get($pluginClass) . '/index.html';
+    return plugin_path_get($class) . '/index.html';
 }
 
-
-function plugin_info_get($alias = ''): \app\model\Plugin
+function plugin_info_get($alias = null): \app\model\Plugin
 {
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     return \app\model\Plugin::getByAlias($alias);
 }
 
-function plugin_relative_path_get($alias = '')
+function plugin_relative_path_get($alias = null)
 {
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     return str_replace('\\', '/', plugin_class_get($alias));
 }
 
-function plugin_class_get($alias = '')
+function plugin_class_get($alias = null)
 {
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     $model = plugin_info_get($alias);
     if (!$model->isExists()) {
         return '';
@@ -57,8 +70,11 @@ function plugin_class_get($alias = '')
     return $model->class;
 }
 
-function plugin_config_get($alias = '')
+function plugin_config_get($alias = null)
 {
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     $model = plugin_info_get($alias);
     if (!$model->isExists()) {
         return null;
@@ -66,24 +82,23 @@ function plugin_config_get($alias = '')
     return $model->config;
 }
 
-function plugin_install($options = [])
+function plugin_static($alias = null)
 {
-    $model = new \app\model\Plugin();
-    $model->allowField([
-        'name',
-        'alias',
-        'path',
-        'config',
-    ]);
-    $model->data($options);
-    $model->save();
-}
-
-function plugin_static($alias)
-{
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
     if (is_string($alias)) {
-
         return "/$alias/static";
     }
     return "/$alias->alias/static";
+}
+function plugin_api($alias = null)
+{
+    if (is_null($alias)) {
+        $alias = plugin_alias_get();
+    }
+    if (is_string($alias)) {
+        return "/api/$alias";
+    }
+    return "/api/$alias->alias";
 }

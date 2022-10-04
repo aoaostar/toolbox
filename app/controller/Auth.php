@@ -4,7 +4,7 @@
 namespace app\controller;
 
 
-use app\lib\oauth\OAuth;
+use app\lib\oauth\Permission;
 use app\model\User;
 use think\facade\Request;
 use think\facade\Session;
@@ -13,7 +13,7 @@ use think\helper\Str;
 
 class Auth extends Base
 {
-    private $instance = OAuth::class;
+    private $instance = Permission::class;
     private $mode;
     private $user;
 

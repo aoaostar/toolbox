@@ -138,6 +138,7 @@ class Plugin
             @del_tree($this->tmpDirPath);
             @unlink($this->zipFilepath);
         }
+        clear_cache();
         return msg('ok', '安装成功', $model);
     }
 

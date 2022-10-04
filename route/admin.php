@@ -23,6 +23,7 @@ Route::group('master', function () {
     Route::get('/system/templates', 'System/templates');
     Route::get('/system/plugin_templates', 'System/plugin_templates');
     Route::get('/system/info', 'System/info');
+    Route::get('/system/permissions', 'System/permissions');
     Route::get('/system', 'System/all');
     Route::post('/system', 'System/update');
     Route::put('/system', 'System/update');

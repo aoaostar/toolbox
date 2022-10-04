@@ -8,20 +8,21 @@ use app\model\Config;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Validate;
+use think\helper\Str;
 
 class System extends BaseController
 {
     public function all()
     {
         $all = Config::all();
-        return msg('ok', 'success', $all);
+        return success($all);
     }
 
     public function get()
     {
         $key = Request::param('key');
         $all = config_get($key);
-        return msg('ok', 'success', $all);
+        return success($all);
     }
 
     public function update()
@@ -40,7 +41,7 @@ class System extends BaseController
             ])->save();
         }
         $all = Config::all();
-        return msg('ok', 'success', $all);
+        return success($all);
     }
 
     public function info()
@@ -59,21 +60,19 @@ class System extends BaseController
             'host' => GetHostByName(env('SERVER_NAME')),
             'date' => date("Y-m-d H:i:s"),
         ];
-        return msg('ok', 'success', $data);
-
+        return success($data);
     }
 
     public function templates()
     {
-        $glob = glob(app()->getRootPath() . config("view.view_dir_name") . '/index/*');
+        $glob = glob(root_path() . config("view.view_dir_name") . '/index/*');
         $arr = [];
         foreach ($glob as $v) {
             if (is_dir($v)) {
                 array_push($arr, basename($v));
             }
         }
-        return msg('ok', 'success', $arr);
-
+        return success($arr);
     }
 
     public function plugin_templates()
@@ -87,7 +86,18 @@ class System extends BaseController
                 array_push($arr, basename($v, '.html'));
             }
         }
-        return msg('ok', 'success', $arr);
+        return success($arr);
+    }
 
+    public function permissions()
+    {
+        $glob = glob(app_path() . '/lib/permission/impl/*');
+        $arr = [];
+        foreach ($glob as $v) {
+            if (is_file($v)) {
+                array_push($arr, Str::snake(basename($v, '.php')));
+            }
+        }
+        return success($arr);
     }
 }

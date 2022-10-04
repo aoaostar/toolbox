@@ -7,7 +7,6 @@ use app\lib\EnvOperation;
 use app\lib\ExecSQL;
 use PDO;
 use think\Exception;
-use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Validate;
 use think\facade\View;
@@ -17,8 +16,7 @@ class Install extends Base
 
     public function __destruct()
     {
-        Cache::clear();
-        reset_opcache();
+        clear_cache(true);
     }
 
     public function initialize()
@@ -27,8 +25,7 @@ class Install extends Base
         if (file_exists(app()->getRootPath() . 'install.lock')) {
             exit('你已安装成功，需要重新安装请删除 install.lock 文件');
         }
-        Cache::clear();
-        reset_opcache();
+        clear_cache(true);
     }
 
     public function index()

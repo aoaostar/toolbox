@@ -61,6 +61,7 @@ class Plugin extends BaseController
             'category_id|分类' => 'integer',
             'enable' => 'integer',
             'weight|权重' => 'integer',
+            'permission|权限' => 'alphaDash',
         ]);
         if (!$validate->check($params)) {
 
@@ -81,6 +82,7 @@ class Plugin extends BaseController
             'enable',
             'weight',
             'template',
+            'permission',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }
@@ -99,6 +101,7 @@ class Plugin extends BaseController
             'category_id|分类' => 'require|integer',
             'enable' => 'integer',
             'weight|权重' => 'integer',
+            'permission|权限' => 'alphaDash',
         ]);
         if (!$validate->check($params)) {
 
@@ -117,6 +120,7 @@ class Plugin extends BaseController
             'enable',
             'weight',
             'template',
+            'permission',
         ])->data($params)->save();
         return msg('ok', 'success', $plugin);
     }

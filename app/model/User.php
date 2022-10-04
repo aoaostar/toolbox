@@ -3,6 +3,8 @@ declare (strict_types=1);
 
 namespace app\model;
 
+use app\lib\Jwt;
+use think\facade\Session;
 use think\Model;
 
 /**
@@ -20,6 +22,11 @@ class User extends Model
 {
     protected $json = ['stars', 'oauth'];
     protected $jsonAssoc = true;
+
+    public static function onAfterRead(Model $model)
+    {
+        $model->avatar = avatar_cdn($model->avatar);
+    }
 
     public static function pagination($param)
     {
@@ -60,7 +67,41 @@ class User extends Model
         return User::where('username', $username)->findOrEmpty();
     }
 
-    public static function visitor()
+    public static function isLogin(): bool
+    {
+
+        $user = self::getUser();
+        return $user !== null && !empty($user->id) && $user->isExists();
+    }
+
+    public static function isAdmin($user = null): bool
+    {
+        $user = $user ?? self::getUser();
+        return $user !== null && !empty($user->id) && $user->id === 1 && $user->isExists();
+    }
+
+    public static function getUser(): User
+    {
+
+        $user = Session::get("user");
+        if (empty($user)) {
+            $access_token = \think\facade\Request::header('Authorization');
+            if (!empty($access_token)) {
+                $resp = (new Jwt())->validate_token($access_token);
+                $user = (object)$resp['data'];
+            }
+        }
+
+        if (!empty($user->id)) {
+            $user = User::get($user->id);
+            if ($user->isExists()) {
+                return $user;
+            }
+        }
+        return User::visitor();
+    }
+
+    public static function visitor(): User
     {
         return new User([
             'id' => 0,

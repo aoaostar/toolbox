@@ -3,7 +3,7 @@
 use think\facade\Route;
 
 Route::rule('api/:alias/[:method]', "Plugin/api")
-    ->middleware(\app\middleware\PluginCheck::class);
+    ->middleware(\app\middleware\PluginCheck::class, true);
 
 
 Route::get(':alias/logo', 'Plugin/logo');
@@ -15,4 +15,4 @@ Route::group(':alias', function () {
         ->middleware(\app\middleware\View::class);
 
 })->prefix('Plugin/')
-    ->middleware(\app\middleware\PluginCheck::class);
+    ->middleware(\app\middleware\PluginCheck::class, false);

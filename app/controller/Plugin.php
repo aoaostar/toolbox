@@ -25,10 +25,8 @@ class Plugin extends Base
 
     public function static()
     {
-        $alias = plugin_alias_get();
-        $class_get = plugin_class_get($alias);
-        $filename = plugin_path_get() . substr($class_get, 0, strpos($class_get, '\\')) . '/' . request()->pathinfo();
-
+        $pathinfo = request()->pathinfo();
+        $filename = plugin_path_get() . substr($pathinfo, strpos($pathinfo, '/'));
         if (!is_file($filename)) {
             abort(404, 'not found');
         }

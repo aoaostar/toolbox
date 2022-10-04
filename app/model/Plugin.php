@@ -21,6 +21,7 @@ use think\Model;
  * @property string $create_time 安装时间
  * @property string $desc 插件描述
  * @property string $logo 插件logo
+ * @property string $permission 权限
  * @property string $template
  * @property string $title 插件标题
  * @property string $update_time 更新时间
@@ -36,6 +37,7 @@ class Plugin extends Base
     public static function onAfterRead(Model $model)
     {
         $model->logo = "/$model->alias/logo.png";
+        $model->permission = $model->permission?:'visitor';
     }
 
     public static function getByAlias($alias = '')

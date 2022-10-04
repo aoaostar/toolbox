@@ -2,7 +2,7 @@
 ### 添加插件
 ![](images/plugin_template_1.png)
 
-### 插件配置信息填入下方`JSON`数据
+### 在插件配置信息填入下方`JSON`数据
 ```json
 {
     "url":"https://www.aoaostar.com"
