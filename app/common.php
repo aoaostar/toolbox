@@ -2,6 +2,7 @@
 // 应用公共文件
 use app\lib\Jwt;
 use app\model\User;
+use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Session;
 use think\helper\Str;
@@ -21,30 +22,24 @@ function msg($status = "ok", $message = "success", $data = [])
     ]);
 }
 
+function success($data = [], $message = "success")
+{
+    return msg('ok', $message, $data);
+}
+
+function error($message = "error", $data = [])
+{
+    return msg('error', $message, $data);
+}
+
 function is_login()
 {
-    $user = get_user();
-    return $user !== null && !empty($user->id) && $user->isExists();
+    return User::isLogin();
 }
 
 function get_user()
 {
-    $user = Session::get("user");
-    if (empty($user)) {
-        $access_token = Request::header('Authorization');
-        if (!empty($access_token)) {
-            $resp = (new Jwt())->validate_token($access_token);
-            $user = (object)$resp['data'];
-        }
-    }
-
-    if (!empty($user->id)) {
-        $user = User::get($user->id);
-        if ($user->isExists()) {
-            return $user;
-        }
-    }
-    return User::visitor();
+    return User::getUser();
 }
 
 function get_username()
@@ -54,8 +49,7 @@ function get_username()
 
 function is_admin($user = null)
 {
-    $user = $user ?? get_user();
-    return $user !== null && !empty($user->id) && $user->id === 1 && $user->isExists();
+    return User::isAdmin();
 }
 
 
@@ -72,6 +66,14 @@ function get_master_path($path = '')
 function reset_opcache()
 {
     if (function_exists('opcache_reset')) opcache_reset();
+}
+
+function clear_cache($flag = false)
+{
+    Cache::clear();
+    if ($flag) {
+        reset_opcache();
+    }
 }
 
 function aoaostar_get($url, $headers = [])
@@ -443,6 +445,18 @@ if (!function_exists('get_content_type')) {
         }
 
         return $mime_type;
+    }
+}
+
+if (!function_exists('avatar_cdn')) {
+
+    function avatar_cdn($str)
+    {
+        if (Str::contains($str, ['gitee.com'])) {
+            $url = preg_replace('#^(http(s?))?(://)#', '', $str);
+            return "https://i0.wp.com/$url";
+        }
+        return $str;
     }
 }
 
