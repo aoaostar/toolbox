@@ -88,18 +88,19 @@ CREATE TABLE `toolbox_plugin`  (
   `enable` int(11) NOT NULL DEFAULT 1 COMMENT '是否启用',
   `request_count` int(11) NOT NULL DEFAULT 0 COMMENT '接口请求次数',
   `category_id` int(11) NOT NULL DEFAULT 0 COMMENT '分类',
-  `template` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'default',
+  `template` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'default' COMMENT '模板',
+  `permission` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'visitor' COMMENT '权限',
   `create_time` datetime NOT NULL COMMENT '安装时间',
   `update_time` datetime NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `alias`(`alias`) USING BTREE,
   UNIQUE INDEX `class`(`class`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of toolbox_plugin
 -- ----------------------------
-INSERT INTO `toolbox_plugin` VALUES (1, 'Hello，Pluto', 'If you see this message, it means that your program is running properly.', 'example', 'aoaostar_com\\example', '{}', 'v1.0', 0, 1, 0, 0, 'default', '2022-09-06 20:43:33', '2022-09-10 23:34:01');
+INSERT INTO `toolbox_plugin` VALUES (1, 'Hello，Pluto', 'If you see this message, it means that your program is running properly.', 'example', 'aoaostar_com\\example', '{}', 'v1.0', 0, 1, 0, 0, 'default', 'visitor', '2022-09-10 23:34:01', '2022-09-10 23:34:01');
 
 -- ----------------------------
 -- Table structure for toolbox_request
