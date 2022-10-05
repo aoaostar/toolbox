@@ -1,0 +1,90 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        node-version: [ 18 ]
+        php-version: [ 8.0 ]
+
+    name: Build
+    runs-on: ${{ matrix.platform }}
+    steps:
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@2.21.2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Check Out Toolbox Code
+        uses: actions/checkout@v3
+        with:
+          path: toolbox
+
+      - name: Check Out Toolbox Web Code
+        uses: actions/checkout@v3
+        with:
+          repository: aoaostar/toolbox-web
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: toolbox-web
+
+      - name: Add Env Property
+        working-directory: toolbox
+        run: |
+          echo "SHORT_SHA=`echo ${GITHUB_SHA::7}`" >> $GITHUB_ENV
+          git fetch --tags
+          echo "VERSION=`echo $(git describe --tags $(git rev-list --tags --max-count=1))`" >> $GITHUB_ENV
+
+      - name: Get Dependencies
+        run: |
+          sudo apt-get update
+          composer self-update
+
+      - name: Init Files
+        run: |
+          rm -rf toolbox/.git
+          rm -rf toolbox/.github
+          rm -rf toolbox/public/admin
+          mkdir -p toolbox/public/admin
+          sed -i "s#v[a-zA-Z0-9.]*#${{ env.VERSION }}#" toolbox/config/version.php
+          cp -fr toolbox toolbox-full
+
+      - name: Build Toolbox
+        working-directory: toolbox-full
+        run: |
+          composer install --no-dev --ignore-platform-reqs
+
+      - name: Build Toolbox Web
+        working-directory: toolbox-web
+        run: |
+          yarn install --registry https://registry.npmjs.org/ && yarn run build
+
+      - name: Copy Additional Files
+        run: |
+          \cp -fr toolbox-web/dist/* toolbox/public/admin
+          \cp -fr toolbox-web/dist/* toolbox-full/public/admin
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: toolbox-${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          path: toolbox
+
+      - name: Upload Full Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: toolbox-full-${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          path: toolbox-full

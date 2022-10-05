@@ -24,6 +24,7 @@
 [插件编写](docs/Plugin.md)  
 [Github Oauth 配置](docs/Github_Oauth.md)     
 [Plugin Template 使用](docs/Plugin_Template.md)      
+[Plugin Permission 使用](docs/Plugin_Permission.md)      
 
 ### 🎊 环境要求
 
@@ -35,16 +36,17 @@
 
 ### 🚠 部署
 
-* 下载源代码
+* 下载`Release`代码
 * 设置运行目录为`public`
 * 关闭防跨站（`open_basedir`）
 * 设置伪静态
 * 去除静态文件代理
-    + 打开nginx配置
+    + 打开`nginx`配置
     + 删除图中选中的内容
 ![](docs/images/problem_1.png)
 
 * 安装依赖
+    > `full`包，已安装依赖，无需重复安装
     + 配置阿里镜像源
     ```
     composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
@@ -82,7 +84,6 @@ location / {
 <IfModule mod_rewrite.c>
   Options +FollowSymlinks -Multiviews
   RewriteEngine On
-
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]

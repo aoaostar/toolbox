@@ -1,0 +1,140 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  release:
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest ]
+        node-version: [ 18 ]
+        php-version: [ 8.0 ]
+    name: Build
+    runs-on: ${{ matrix.platform }}
+    steps:
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.nodejs-version }}
+
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@2.21.2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Add Env Property
+        run: |
+          echo "VERSION=`echo ${GITHUB_REF/refs\/tags\//}`" >> $GITHUB_ENV
+
+      - name: Check Out Toolbox Code
+        uses: actions/checkout@v3
+        with:
+          path: toolbox
+
+      - name: Check Out Toolbox Web Code
+        uses: actions/checkout@v3
+        with:
+          repository: aoaostar/toolbox-web
+          token: ${{ secrets.ACCESS_TOKEN }}
+          path: toolbox-web
+
+      - name: Get Dependencies
+        run: |
+          sudo apt-get update
+          composer self-update
+
+      - name: Init files
+        run: |
+          rm -rf toolbox/.git
+          rm -rf toolbox/.github
+          rm -rf toolbox/public/admin
+          mkdir -p toolbox/public/admin
+          sed -i "s#v[a-zA-Z0-9.]*#${{ env.VERSION }}#" toolbox/config/version.php
+          cp -fr toolbox toolbox-full
+
+      - name: Build Toolbox
+        working-directory: toolbox-full
+        run: |
+          composer install --no-dev --ignore-platform-reqs
+
+      - name: Build Toolbox Web
+        working-directory: toolbox-web
+        run: |
+          yarn install --registry https://registry.npmjs.org/ && yarn run build
+
+      - name: Copy Toolbox Web Files
+        run: |
+          \cp -fr toolbox-web/dist/* toolbox/public/admin
+          \cp -fr toolbox-web/dist/* toolbox-full/public/admin
+
+
+      - name: Compress
+        run: |
+          cd toolbox && zip -r ../toolbox.zip *
+          cd ../
+          cd toolbox-full && zip -r ../toolbox-full.zip *
+
+      - name: Build Changelog
+        id: github_release
+        uses: mikepenz/release-changelog-builder-action@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ steps.github_release.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Toolbox
+        uses: actions/upload-artifact@v3
+        with:
+          name: toolbox-${{ env.VERSION }}
+          path: toolbox
+
+      - name: Upload Toolbox-Full
+        uses: actions/upload-artifact@v3
+        with:
+          name: toolbox-full-${{ env.VERSION }}
+          path: toolbox-full
+
+      - name: Upload Release Base
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: toolbox.zip
+          asset_name: toolbox-${{ env.VERSION }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Update
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: toolbox.zip
+          asset_name: toolbox-${{ env.VERSION }}-update.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Full
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: toolbox-full.zip
+          asset_name: toolbox-${{ env.VERSION }}-full.zip
+          asset_content_type: application/zip
