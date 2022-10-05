@@ -1,0 +1,3 @@
+[submodule "public\\admin"]
+	path = public\\admin
+	url = https://github.com/aoaostar/toolbox-web
