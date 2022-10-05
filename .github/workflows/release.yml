@@ -75,9 +75,9 @@ jobs:
 
       - name: Compress
         run: |
-          cd toolbox && zip -r ../toolbox.zip *
+          cd toolbox && zip -r ../toolbox.zip ./
           cd ../
-          cd toolbox-full && zip -r ../toolbox-full.zip *
+          cd toolbox-full && zip -r ../toolbox-full.zip ./
 
       - name: Build Changelog
         id: github_release
