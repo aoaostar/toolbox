@@ -125,7 +125,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: toolbox.zip
+          asset_path: toolbox-full.zip
           asset_name: toolbox-${{ env.VERSION }}-update.zip
           asset_content_type: application/zip
 
