@@ -27,7 +27,8 @@
     "ext-iconv": "*",
     "ext-openssl": "*",
     "firebase/php-jwt": "^6.2",
-    "ext-fileinfo": "*"
+    "ext-fileinfo": "*",
+    "topthink/think-captcha": "^3.0"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

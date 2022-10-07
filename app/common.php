@@ -378,6 +378,11 @@ function npm_cdn($file = '')
     return $config_get . $file;
 }
 
+function captcha_api()
+{
+    return (string)url('/api/captcha');
+}
+
 if (!function_exists('str_starts_with')) {
     function str_starts_with($str, $start)
     {

@@ -2,12 +2,13 @@
 
 use think\facade\Route;
 
-
-
 Route::group('api', function () {
     Route::any('plugins', 'Plugin/all');
     Route::any('categories', 'Category/all');
     Route::any('record', 'Plugin/record');
+    Route::any('captcha', function (){
+        return captcha();
+    });
 })->prefix('api.');
 
 

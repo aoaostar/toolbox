@@ -3,7 +3,8 @@
 use think\facade\Route;
 
 Route::rule('api/:alias/[:method]', "Plugin/api")
-    ->middleware(\app\middleware\PluginCheck::class, true);
+    ->middleware(\app\middleware\PluginCheck::class, true)
+    ->middleware(\app\middleware\RateLimit::class);
 
 
 Route::get(':alias/logo', 'Plugin/logo');

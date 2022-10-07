@@ -2,7 +2,6 @@
 
 namespace app\controller;
 
-
 use think\facade\View;
 
 class Plugin extends Base
@@ -13,13 +12,14 @@ class Plugin extends Base
         $method = plugin_method_get();
         $class = '\\plugin\\' . plugin_class_get($alias) . '\\App';
         if (!class_exists($class)) {
-            return msg("error", "该Api不存在");
+            return error('该Api不存在');
         }
         $app = new $class();
 
         if (!method_exists($app, $method)) {
-            return msg("error", "该Api不存在该方法");
+            return error('该Api不存在该方法');
         }
+
         return $app->$method();
     }
 
