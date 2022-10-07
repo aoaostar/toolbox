@@ -8,7 +8,6 @@ use app\controller\Base;
 use app\lib\ExecSQL;
 use app\model\Migration;
 use think\facade\Request;
-use think\facade\Session;
 
 class Ota extends Base
 {
@@ -44,10 +43,10 @@ class Ota extends Base
             $release->data->current_version = get_version();
 
         } catch (\Exception $e) {
-            return msg('error', $e->getMessage());
+            return error($e->getMessage());
 
         }
-        return msg('ok', 'success', $release->data);
+        return success($release->data);
     }
 
     public function update()
@@ -56,12 +55,12 @@ class Ota extends Base
             $release = $this->get_last_release();
 
         } catch (\Exception $e) {
-            return msg('error', $e->getMessage());
+            return error($e->getMessage());
 
         }
         $get = aoaostar_get($release->data->download_url);
         if (empty($get) || str_starts_with($get, 'CURL Error:')) {
-            return msg('error', '下载更新包失败，请检查网络连通性是否正常');
+            return error('下载更新包失败，请检查网络连通性是否正常');
         }
         $tmpFilename = app()->getRuntimePath() . '/tmp/' . uniqid() . '.zip';
         if (!file_exists(dirname($tmpFilename))) {
@@ -69,11 +68,11 @@ class Ota extends Base
         }
         try {
             if (!file_put_contents($tmpFilename, $get)) {
-                return msg('error', '保存文件失败，请检查是否有写入权限');
+                return error('保存文件失败，请检查是否有写入权限');
             }
             $rootPath = app()->getRootPath();
             if (!unzip($tmpFilename, $rootPath)) {
-                return msg('error', '解压压缩包失败');
+                return error('解压压缩包失败');
             }
             return msg('ok', '资源包解压成功', $release->data);
         } finally {

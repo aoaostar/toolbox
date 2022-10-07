@@ -21,6 +21,7 @@ class Install implements \plugin\Install
         # 版本号
         $model->version = 'v1.0';
     }
+
     # 卸载时运行方法
     public function UnInstall(Plugin $model)
     {

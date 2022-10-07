@@ -24,12 +24,12 @@ class Plugin extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $params['enable'] = 1;
         $plugins = \app\model\Plugin::all($params);
 
-        return msg('ok', 'success', $plugins);
+        return success($plugins);
     }
 
     public function star()
@@ -38,11 +38,11 @@ class Plugin extends Base
         $action = Request::param('action', 'add');
 
         if (empty($alias)) {
-            return msg('error', 'alias不得为空');
+            return error('alias不得为空');
         }
         $model = \app\model\Plugin::where('alias', $alias)->with(['category'])->findOrEmpty();
         if ($model->isEmpty()) {
-            return msg('error', '该工具不存在');
+            return error('该工具不存在');
         }
         $user = get_user();
         $stars = $user->stars;
@@ -55,7 +55,7 @@ class Plugin extends Base
         }
         $user->stars = array_unique(array_values($stars));
         $user->save();
-        return msg("ok", "success", $user->stars);
+        return success($user->stars);
     }
 
     public function record()
@@ -66,11 +66,11 @@ class Plugin extends Base
             'id' => 'require|number'
         ]);
         if (!$validate->check(['id' => $id])) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         if (Cache::has(__METHOD__ . client_ip())) {
             //多次请求不记录
-            return msg('ok', 'Recorded');
+            return success([], 'Recorded');
         }
         $plugin = \app\model\Plugin::get($id);
         if ($plugin->isExists()) {
@@ -85,6 +85,6 @@ class Plugin extends Base
             $plugin->save();
         }
         Cache::set(__METHOD__ . client_ip(), time(), 3600);
-        return msg();
+        return success();
     }
 }

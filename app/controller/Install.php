@@ -61,14 +61,14 @@ class Install extends Base
         ];
         $validate = Validate::rule($rules);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
 
         $dsn = 'mysql:host=' . $params['hostname'] . ';dbname=' . $params['database'] . ';port=' . $params['hostport'] . ';charset=utf8';
         try {
             new PDO($dsn, $params['username'], $params['password']);
         } catch (\Exception $e) {
-            return msg('error', $e->getMessage());
+            return error($e->getMessage());
         }
         try {
             $envFile = file_get_contents(app()->getRootPath() . '.env.example');
@@ -78,9 +78,9 @@ class Install extends Base
             }
             $envOperation->save();
         } catch (\Exception $e) {
-            return msg('error', $e->getMessage());
+            return error($e->getMessage());
         }
-        return msg();
+        return success();
     }
 
     public function init_data()
@@ -101,11 +101,11 @@ class Install extends Base
                 }
             }
         } catch (\Exception $e) {
-            return msg('error', $e->getMessage());
+            return error($e->getMessage());
         }
         //重置secret_key
         config_set('global.secret_key', md5(uniqid()));
-        return msg();
+        return success();
     }
 
     public function oauth()
@@ -117,7 +117,7 @@ class Install extends Base
         ];
         $validate = Validate::rule($rules);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         foreach (array_keys($rules) as $v) {
             $keys = explode('.', $v);
@@ -126,14 +126,14 @@ class Install extends Base
                 $value = $value[$key];
             }
             if (!config_set("oauth.$v", $value)) {
-                return msg('error', "[$v]保存失败");
+                return error("[$v]保存失败");
             }
         }
         file_put_contents(app()->getRootPath() . 'install.lock', format_date());
         @aoaostar_get(base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbS9vcGVuL2luc3RhbGw='), [
             'referer:' . Request::domain(true),
         ]);
-        return msg();
+        return success();
     }
 
 }

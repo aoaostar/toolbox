@@ -1,13 +1,12 @@
 <?php
 // 应用公共文件
-use app\lib\Jwt;
+
 use app\model\User;
 use think\facade\Cache;
-use think\facade\Request;
-use think\facade\Session;
 use think\helper\Str;
 
 require dirname(__DIR__) . "/plugin/common.php";
+
 function template_path_get(): string
 {
     return app()->getRootPath() . config("view.view_dir_name") . '/index/' . config_get('global.template') . DIRECTORY_SEPARATOR;

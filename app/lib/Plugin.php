@@ -120,6 +120,7 @@ class Plugin
                 $model->enable = 1;
                 $model->weight = 0;
                 $model->template = 'default';
+                $model->permission = 'visitor';
             }
             $install->Install($model);
             $model->logo = "/$model->alias/logo.png";
@@ -133,7 +134,7 @@ class Plugin
             $model->save();
         } catch (\Exception $e) {
             @del_tree($this->pluginPath);
-            return msg('error', $e->getMessage());
+            return error( $e->getMessage());
         } finally {
             @del_tree($this->tmpDirPath);
             @unlink($this->zipFilepath);

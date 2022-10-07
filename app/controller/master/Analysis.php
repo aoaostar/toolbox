@@ -27,7 +27,7 @@ class Analysis extends Base
             Cache::set(__METHOD__, $arr);
         }
 
-        return msg('ok', 'success', $arr);
+        return success($arr);
     }
 
 
@@ -43,7 +43,7 @@ class Analysis extends Base
                 $arr['user_increase_count'][$date] = \app\model\User::whereDay('create_time', $date)->count('id');
             }
         }
-        return msg('ok', 'success', $arr);
+        return success($arr);
     }
 
     public function statistics()
@@ -61,7 +61,7 @@ class Analysis extends Base
 
         $arr = Cache::get(__METHOD__ . '_' . $DAYS . '_' . $COUNT);
         if (!empty($arr)) {
-            return msg('ok', 'success', $arr);
+            return success($arr);
         }
 
         $arr = [
@@ -119,7 +119,7 @@ class Analysis extends Base
             return ($av > $bv) ? -1 : 1;
         });
         Cache::set(__METHOD__ . '_' . $DAYS . '_' . $COUNT, $arr);
-        return msg('ok', 'success', $arr);
+        return success($arr);
     }
 
 }

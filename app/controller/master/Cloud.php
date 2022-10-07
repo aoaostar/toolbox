@@ -5,9 +5,10 @@ namespace app\controller\master;
 
 
 use app\controller\Base;
+use Exception;
+use think\Collection;
 use think\facade\Cache;
 use think\facade\Request;
-use think\Collection;
 
 class Cloud extends Base
 {
@@ -31,37 +32,29 @@ class Cloud extends Base
 
     public function categories()
     {
-        $data = Cache::get(__METHOD__);
-        if (!empty($data)) {
-            return msg("ok", "success", $data);
-        }
+        try {
 
-        $res = aoaostar_get($this->CATEGORIES_API, $this->HEADERS);
-        $json = json_decode($res);
-        if (empty($json) || empty($json->data)) {
-            if (!empty($json->message)) {
-                return msg("error", $json->message);
-            }
-            return msg("error", '连接云中心失败，请检查网络连通性是否正常');
+            $json = $this->get_remote_data(__METHOD__, $this->CATEGORIES_API);
+
+            return success($json->data);
+
+        } catch (\Exception $e) {
+
+            return error($e->getMessage());
         }
-        Cache::set(__METHOD__, $json->data);
-        return msg("ok", "success", $json->data);
     }
 
     public function plugins()
     {
-        $json = Cache::get(__METHOD__);
-        if (empty($json)) {
-            $res = aoaostar_get($this->PLUGINS_API, $this->HEADERS);
-            $json = json_decode($res);
-            if (empty($json) || empty($json->data)) {
-                if (!empty($json->message)) {
-                    return msg("error", $json->message);
-                }
-                return msg("error", '连接云中心失败，请检查网络连通性是否正常');
-            }
-            Cache::set(__METHOD__, $json);
+
+        try {
+            $json = $this->get_remote_data(__METHOD__, $this->PLUGINS_API);
+
+        } catch (\Exception $e) {
+
+            return error($e->getMessage());
         }
+
         $plugins = \app\model\Plugin::field('id,class,version')->select();
 
         foreach ($json->data->items as &$v) {
@@ -112,63 +105,42 @@ class Cloud extends Base
         }
         $json->data->items = array_values($collection->toArray());
 
-        return msg("ok", "success", $json->data);
+        return success($json->data);
     }
 
     public function releases()
     {
-        $data = Cache::get(__METHOD__);
-        if (!empty($data)) {
-            return msg("ok", "success", $data);
-        }
-        $query = http_build_query([
-            'page' => 1,
-            'limit' => 12,
-        ]);
-        $res = aoaostar_get("$this->RELEASES_API?$query", $this->HEADERS);
-        $json = json_decode($res);
-        if (empty($json) || empty($json->data)) {
-            if (!empty($json->message)) {
-                return msg("error", $json->message);
-            }
-            return msg("error", '连接云中心失败，请检查网络连通性是否正常');
-        }
-        Cache::set(__METHOD__, $json->data);
-        return msg("ok", "success", $json->data);
-    }
 
-    private function get_plugin_info($id)
-    {
-        $query = http_build_query([
-            'id' => $id,
-        ]);
-        $res = aoaostar_get("$this->PLUGIN_API?$query", $this->HEADERS);
-        $json = json_decode($res);
+        try {
 
-        if (empty($json) || empty($json->data)) {
-            if (!empty($json->message)) {
-                throw new \Exception($json->message);
-            }
-            throw new \Exception('"连接云中心失败，请检查网络连通性是否正常"');
+            $query = http_build_query([
+                'page' => 1,
+                'limit' => 12,
+            ]);
+            $json = $this->get_remote_data(__METHOD__, "$this->RELEASES_API?$query");
+
+            return success($json->data);
+
+        } catch (\Exception $e) {
+
+            return error($e->getMessage());
         }
-        return $json;
     }
 
     public function plugin_get()
     {
         $id = Request::param('id');
-        if (empty($id)) {
-            return msg("error", 'id不得为空');
-        }
-        $data = Cache::get(__METHOD__ . "_$id");
-        if (!empty($data)) {
-            return msg("ok", "success", $data);
-        }
+
         try {
+            $this->validate([
+                'id' => $id,
+            ], [
+                'id' => 'require|number',
+            ]);
             $json = $this->get_plugin_info($id);
         } catch (\Exception $e) {
 
-            return msg("error", $e->getMessage());
+            return error($e->getMessage());
         }
 
         $plugin = \app\model\Plugin::field('class,version')->where('class', $json->data->class)->findOrEmpty();
@@ -176,22 +148,23 @@ class Cloud extends Base
         if (!$plugin->isEmpty()) {
             $json->data->current_version = $plugin->version;
         }
-
-        Cache::set(__METHOD__ . "_$id", $json->data);
-        return msg("ok", "success", $json->data);
+        return success($json->data);
     }
 
     public function plugin_install()
     {
         $id = Request::param('id');
-        if (empty($id)) {
-            return msg("error", 'id不得为空');
-        }
+
         try {
+            $this->validate([
+                'id' => $id,
+            ], [
+                'id' => 'require|number',
+            ]);
             $json = $this->get_plugin_info($id);
         } catch (\Exception $e) {
 
-            return msg("error", $e->getMessage());
+            return error($e->getMessage());
         }
 
         $plugin = new \app\lib\Plugin();
@@ -199,22 +172,49 @@ class Cloud extends Base
         $zipFilepath = $plugin->getZipFilepath();
         $file = $json->data->file;
         $downloadUrl = config_get('cloud.mirror');
-        //https://github.com/{owner}/{repo}/raw/{branch}/{path}
+
         if (empty($downloadUrl)) {
             $downloadUrl = 'https://github.com/{owner}/{repo}/raw/{branch}/{path}';
         }
+
         $arr = array_keys(get_object_vars($file));
 
         foreach ($arr as $v) {
             $downloadUrl = str_ireplace("{{$v}}", $file->$v, $downloadUrl);
         }
+
         $data = aoaostar_get($downloadUrl);
+
         if (empty($data) || str_starts_with($data, 'CURL Error:')) {
-            return msg("error", "下载插件包失败", $data);
+            return error("下载插件包失败", $data);
         }
+
         file_put_contents($zipFilepath, $data);
 
         return $plugin->install();
+    }
+
+    private function get_plugin_info($id)
+    {
+        $query = http_build_query([
+            'id' => $id,
+        ]);
+        return $this->get_remote_data(__METHOD__ . '__' . $id, "$this->PLUGIN_API?$query");
+    }
+
+    private function get_remote_data($key, $url)
+    {
+        return Cache::remember($key, function () use ($url) {
+            $res = aoaostar_get($url, $this->HEADERS);
+            $json = json_decode($res);
+            if (empty($json) || empty($json->data)) {
+                if (!empty($json->message)) {
+                    throw  new Exception($json->message);
+                }
+                throw  new Exception('连接云中心失败，请检查网络连通性是否正常');
+            }
+            return $json;
+        }, 3600);
     }
 
 }

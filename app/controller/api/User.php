@@ -12,7 +12,7 @@ class User extends Base
 
     public function get()
     {
-        return msg('ok', 'success', get_user());
+        return success(get_user());
     }
 
     public function update()
@@ -22,14 +22,14 @@ class User extends Base
         ]);
         $params = request()->only(['username']);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         if (\app\model\User::getByUsername($params['username'])->isExists()) {
-            return msg('error', '该用户名已存在');
+            return error('该用户名已存在');
         }
         $model = get_user();
         $model->username = trim($params['username']);
         $model->allowField(['username'])->save();
-        return msg('ok', 'success', $model);
+        return success($model);
     }
 }

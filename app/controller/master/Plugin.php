@@ -22,13 +22,13 @@ class Plugin extends BaseController
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugins = (new \app\model\Plugin)->pagination($params);
 
         $plugins['items']->load(['category']);
 
-        return msg('ok', 'success', $plugins);
+        return success($plugins);
     }
 
     public function get()
@@ -41,10 +41,10 @@ class Plugin extends BaseController
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = \app\model\Plugin::get($params['id']);
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function update()
@@ -65,7 +65,7 @@ class Plugin extends BaseController
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
 
         $plugin = \app\model\Plugin::get($params['id']);
@@ -84,7 +84,7 @@ class Plugin extends BaseController
             'template',
             'permission',
         ])->data($params)->save();
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function create()
@@ -105,7 +105,7 @@ class Plugin extends BaseController
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = new \app\model\Plugin();
 
@@ -122,7 +122,7 @@ class Plugin extends BaseController
             'template',
             'permission',
         ])->data($params)->save();
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function delete()
@@ -133,11 +133,11 @@ class Plugin extends BaseController
             'id' => 'require|integer',
         ]);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = \app\model\Plugin::get($params['id']);
         if ($plugin->isEmpty()) {
-            return msg('error', '该插件不存在');
+            return error('该插件不存在');
         }
         Db::startTrans();
         try {
@@ -159,9 +159,9 @@ class Plugin extends BaseController
         } catch (\Exception $e) {
             // 回滚事务
             Db::rollback();
-            return msg('error', $e->getMessage(), $e);
+            return error($e->getMessage(), $e);
         }
-        return msg('ok', 'success');
+        return success();
     }
 
     public function upload()
@@ -172,7 +172,7 @@ class Plugin extends BaseController
             'file' => 'require|file',
         ]);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $uploadedFile = Request::file('file');
         $plugin = new \app\lib\Plugin();
@@ -196,7 +196,7 @@ class Plugin extends BaseController
 
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
 
 
@@ -211,6 +211,6 @@ class Plugin extends BaseController
         }
         $params['logo']->move($pluginPath, 'logo.png');
 
-        return msg();
+        return success();
     }
 }

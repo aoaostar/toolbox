@@ -59,13 +59,13 @@ class App implements Drive
     # 访问/api/example
     public function Index()
     {
-        return msg("ok", __METHOD__);
+        return success();
     }
 
     # 访问/api/example/upload
     public function Upload()
     {
-        return msg("ok", __METHOD__);
+        return success();
     }
 }
 ```

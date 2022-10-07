@@ -16,6 +16,6 @@ class Category extends Base
 
         $select = \app\model\Category::all($params);
 
-        return msg("ok", "success", $select);
+        return success($select);
     }
 }

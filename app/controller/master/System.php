@@ -7,7 +7,6 @@ use app\BaseController;
 use app\model\Config;
 use think\facade\Db;
 use think\facade\Request;
-use think\facade\Validate;
 use think\helper\Str;
 
 class System extends BaseController

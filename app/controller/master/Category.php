@@ -21,11 +21,11 @@ class Category extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
 
         $select = (new \app\model\Category)->pagination($params);
-        return msg("ok", "success", $select);
+        return success($select);
     }
 
     public function get()
@@ -38,10 +38,10 @@ class Category extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = \app\model\Category::get($params['id']);
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function create()
@@ -53,14 +53,14 @@ class Category extends Base
             'weight|权重' => 'require|integer',
         ]);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $model = new \app\model\Category();
         $model->allowField([
             'title',
             'weight',
         ])->data($params)->save();
-        return msg('ok', 'success', $model);
+        return success($model);
     }
 
     public function update()
@@ -73,14 +73,14 @@ class Category extends Base
             'weight|权重' => 'integer',
         ]);
         if (!$validate->check($params)) {
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $model = \app\model\Category::get($params['id']);
         $model->allowField([
             'title',
             'weight',
         ])->data($params)->save();
-        return msg('ok', 'success', $model);
+        return success($model);
     }
 
     public function delete()
@@ -92,12 +92,12 @@ class Category extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $delete = \app\model\Category::get($params['id'])->delete();
         if ($delete) {
-            return msg('ok', '删除失败');
+            return error('删除失败');
         }
-        return msg('ok', 'success');
+        return success();
     }
 }

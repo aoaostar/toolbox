@@ -7,7 +7,8 @@ use app\BaseController;
 
 class Menu extends BaseController
 {
-    public function get(){
+    public function get()
+    {
 
         $homeInfo = [
             'title' => '主页',

@@ -8,11 +8,8 @@ use app\BaseController;
 
 class Admin extends BaseController
 {
-    protected function initialize()
+    public function index()
     {
-//        View::config(['view_path' => '']);
-    }
-    public function index(){
         return view();
     }
 }

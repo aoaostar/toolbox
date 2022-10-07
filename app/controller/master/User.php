@@ -21,7 +21,7 @@ class User extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
 
         $select = \app\model\User::pagination($params);
@@ -39,10 +39,10 @@ class User extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = \app\model\User::get($params['id']);
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function update()
@@ -57,7 +57,7 @@ class User extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $plugin = \app\model\User::get($params['id']);
         if (empty($params['stars'])) {
@@ -70,7 +70,7 @@ class User extends Base
             'stars',
             'oauth',
         ])->data($params)->save();
-        return msg('ok', 'success', $plugin);
+        return success($plugin);
     }
 
     public function delete()
@@ -82,13 +82,13 @@ class User extends Base
         ]);
         if (!$validate->check($params)) {
 
-            return msg('error', $validate->getError());
+            return error($validate->getError());
         }
         $delete = \app\model\User::get($params['id'])->delete();
         if ($delete) {
             return msg('ok', '删除失败');
         }
-        return msg('ok', 'success');
+        return success();
     }
 
 }

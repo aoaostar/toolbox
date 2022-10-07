@@ -15,13 +15,13 @@ class Auth
             if ($request->isAjax() || !$request->isGet()) {
                 $token = Request::header('Authorization');
                 if (empty($token)) {
-                    return msg('error', '请登录')->code(401);
+                    return error('请登录')->code(401);
                 }
                 $validate_token = (new Jwt())->validate_token($token);
                 if ($validate_token['status']) {
                     return $next($request);
                 }
-                return msg('error', $validate_token['message'])->code(401);
+                return error($validate_token['message'])->code(401);
             }
             return redirect((string)url('/auth/login'));
         }
