@@ -382,12 +382,19 @@ function captcha_api()
     return (string)url('/api/captcha');
 }
 
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
 if (!function_exists('str_starts_with')) {
     function str_starts_with($str, $start)
     {
         return (@substr_compare($str, $start, 0, strlen($start)) == 0);
     }
 }
+
 if (!function_exists('str_ends_with')) {
     function str_ends_with(string $haystack, string $needle): bool
     {
