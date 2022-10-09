@@ -80,6 +80,7 @@ class App implements Drive
 ### 复刻仓库
 
 ![](images/plugin_1.png)
+
 ### 打包文件
 ```
 Usage:
@@ -112,7 +113,8 @@ php think plugin:package aoaostar_com
                 Install.php
                 logo.png
 ```
-然后`push`到`github`仓库即可
+然后`push`到`github`仓库即可   
+如果觉得自己的插件不错的话可以发起`pull request`到官方仓库哦~
 
 ### 发布
 * 打开傲星工具箱云平台，并且登录    
@@ -123,11 +125,21 @@ php think plugin:package aoaostar_com
 * 添加插件  
 
 ![](images/plugin_3.png)
+
+* 填写正确的插件信息
+  
 ![](images/plugin_4.png)
-> 添加完毕后即可在`插件管理`/`工具箱后台` - `插件中心`看到你刚才添加的插件了   
->请严格按照上方目录 # 储存 规定的文件结构储存文件！    
->否则将导致无法显示logo或者无法在线安装！
+
+* 成功添加插件  
+
+![](images/plugin_5.png)
+
+> 添加完毕后即可在`插件管理`看到你刚才添加的插件了   
+> `待审核`状态请联系作者审核，审核通过了就可以在所有`傲星工具箱`的`插件中心`看到你的插件啦~    
+> 请严格按照上方目录 # 储存 规定的文件结构储存文件！    
+> 否则将导致无法显示logo或者无法在线安装！
+
 ### 小贴士
 * `工具箱后台` - `插件中心`看不到我发布的插件?
     * 刷新缓存即可    
-    * ![](images/plugin_5.png)
+    * ![](images/plugin_6.png)
