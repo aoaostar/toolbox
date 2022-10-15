@@ -55,6 +55,8 @@ jobs:
           rm -rf toolbox/public/admin
           mkdir -p toolbox/public/admin
           sed -i "s#v[a-zA-Z0-9.]*#${{ env.VERSION }}#" toolbox/config/version.php
+          sed -i '3d' toolbox-web/package.json
+          sed -i "3 i\  \"version\": \"${{ env.VERSION }}\"," toolbox-web/package.json
           cp -fr toolbox toolbox-full
 
       - name: Build Toolbox
