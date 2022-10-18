@@ -449,12 +449,14 @@ if (!function_exists('get_content_type')) {
             case 'js':
                 $mime_type = 'application/javascript';
                 break;
+            case 'svg':
+                $mime_type = 'image/svg+xml';
+                break;
             default:
                 $f_open = finfo_open(FILEINFO_MIME_TYPE);
                 $mime_type = finfo_file($f_open, $filename);
                 finfo_close($f_open);
         }
-
         return $mime_type;
     }
 }
