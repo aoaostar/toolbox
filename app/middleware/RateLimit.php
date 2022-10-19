@@ -14,7 +14,7 @@ class RateLimit
 
         $class = '\\plugin\\' . plugin_class_get(plugin_alias_get()) . '\\App';
 
-        if (new $class() instanceof CheckCaptcha && $class::CHECK_CAPTCHA) {
+        if (new $class() instanceof CheckCaptcha) {
             try {
                 Validate::failException(true)->check([
                     'captcha' => request()->param('captcha')
