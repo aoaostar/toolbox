@@ -1,5 +1,4 @@
 {extend name="layout/layout" /}
-﻿
 {block name="title"}{$app.title} - {$app.subtitle}{/block}
 {block name="main"}
 <div class="container mx-auto" id="app">
@@ -7,12 +6,8 @@
     <div class="card shadow-lg">
         <div class="card-body lg:flex-row justify-between">
             <div class="tabs">
-                <a @click="categoryId=0" class="btn btn-ghost btn-sm rounded-btn tab"
-                   :class="{'tab-active':!categoryId}">所有</a>
-                {foreach $categories as $v}
-                <a @click="categoryId={$v.id}" class="btn btn-ghost btn-sm rounded-btn tab"
-                   :class="{'tab-active':categoryId=={$v.id}}">{$v.title}</a>
-                {/foreach}
+                <a v-for="v in categories" @click="categoryId=v.id" class="btn btn-ghost btn-sm rounded-btn tab"
+                   :class="{'tab-active':categoryId==v.id}">{{v.title}}</a>
             </div>
             <div class="mt-4 lg:mt-0">
                 <svg class="text-base-content pointer-events-none absolute z-10 mt-4 ml-3 stroke-current opacity-60 "
@@ -24,52 +19,66 @@
             </div>
         </div>
     </div>
-    <div class="grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4">
-        <div class="card text-center shadow-lg"
-             v-for="item,index in currentPlugins" :key="index">
-            <div class="card-body">
-                <div class=" flex flex-row">
-                    <div class="avatar w-1/4">
-                        <div class="rounded-btn w-20 h-20">
-                            <img :src="`${item.logo}?v=${item.version}`" alt="">
-                        </div>
-                    </div>
-                    <div class="ml-4 w-3/4 flex justify-center flex-col">
-                        <h2 class="card-title truncate block">{{item.title}}</h2>
-                        <div class="flex">
-                            <button v-if="user.stars.indexOf(item.alias)===-1" class="btn btn-ghost btn-sm rounded-btn"
-                                    @click="star(item.alias)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     class="inline-block w-5 mr-2 stroke-current">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                </svg>
-                                Star
-                            </button>
-                            <button v-else class="btn btn-ghost btn-sm rounded-btn" @click="star(item.alias,'remove')">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                     class="inline-block w-5 mr-2 stroke-current">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          fill="#d63031"
-                                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                </svg>
-                                UnStar
-                            </button>
-                            <button @click="categoryId=item.category.id" class="btn btn-ghost btn-sm rounded-btn"
-                                    v-if="item.category!==null">
-                                [{{item.category.title}}]
-                            </button>
-                            <button class="btn btn-ghost btn-sm rounded-btn" v-else>
-                                [默认类]
-                            </button>
-                        </div>
+    <div class="flex flex-col" v-for="plugin,index in currentPlugins" :key="index">
+        <div class="flex flex-row cursor-pointer" v-if="plugin?.items?.length>0 || plugin.id===-2">
+            <div class="card shadow-lg">
+                <div class="card-body flex flex-row items-center">
+                    <div class="font-extrabold text-3xl" v-if="!keywords">#</div>
+                    <div class="font-extrabold">
+                        {{plugin.title}}
                     </div>
                 </div>
-                <div class="mt-0">
-                    <p v-if="item.desc" class="truncate">{{item.desc}}</p>
-                    <p v-else class="truncate">暂无描述</p>
-                    <div class="justify-center card-actions mt-4">
-                        <a class="btn btn-primary btn-block " target="_blank" :href="'/'+item.alias">进入</a>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4">
+            <div class="card text-center shadow-lg"
+                 v-for="item,key in plugin.items" :key="key">
+                <div class="card-body">
+                    <div class=" flex flex-row">
+                        <div class="avatar w-1/4">
+                            <div class="rounded-btn w-20 h-20">
+                                <img :src="`${item.logo}?v=${item.version}`" alt="">
+                            </div>
+                        </div>
+                        <div class="ml-4 w-3/4 flex justify-center flex-col">
+                            <h2 class="card-title truncate block">{{item.title}}</h2>
+                            <div class="flex">
+                                <button v-if="user.stars.indexOf(item.alias)===-1"
+                                        class="btn btn-ghost btn-sm rounded-btn"
+                                        @click="star(item.alias)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         class="inline-block w-5 mr-2 stroke-current">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    Star
+                                </button>
+                                <button v-else class="btn btn-ghost btn-sm rounded-btn"
+                                        @click="star(item.alias,'remove')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         class="inline-block w-5 mr-2 stroke-current">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              fill="#d63031"
+                                              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    UnStar
+                                </button>
+                                <button @click="categoryId=item.category.id" class="btn btn-ghost btn-sm rounded-btn"
+                                        v-if="item.category!==null">
+                                    [{{item.category.title}}]
+                                </button>
+                                <button class="btn btn-ghost btn-sm rounded-btn" v-else>
+                                    [默认类]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-0">
+                        <p v-if="item.desc" class="truncate">{{item.desc}}</p>
+                        <p v-else class="truncate">暂无描述</p>
+                        <div class="justify-center card-actions mt-4">
+                            <a class="btn btn-primary btn-block " target="_blank" :href="'/'+item.alias">进入</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -82,42 +91,71 @@
     new Vue({
         el: '#app',
         data: {
-            categoryId: "{:request()->get('category_id')}",
+            categoryId: "{:request()->get('category_id')}" || -1,
             plugins: [],
-            currentPlugins: [],
             keywords: '',
             user: JSON.parse('{$user|raw}'),
+            categories: [
+                {
+                    id: -1,
+                    title: '所有',
+                    items: [],
+                },
+                ...JSON.parse('{$categories|raw}'),
+                {
+                    id: 0,
+                    title: '杂乱',
+                    items: [],
+                }],
         },
-        watch: {
-            categoryId(newVal) {
-                if (!newVal) {
-                    this.currentPlugins = this.plugins;
-                    return
-                }
+        computed: {
+            currentPlugins() {
                 let arr = []
-                for (let plugin of this.plugins) {
-                    if (plugin.category_id === newVal) {
-                        arr.push(plugin)
+
+                if (this.keywords) {
+                    arr.push({
+                        id: -2,
+                        title: `“${this.keywords}”的搜索结果`,
+                        items: [],
+                    })
+                    this.categoryId = -1
+
+                } else if (this.categoryId >= 0) {
+                    arr = structuredClone(this.categories).filter(v => {
+                        return v.id === this.categoryId
+                    })
+                } else {
+                    arr = structuredClone(this.categories)
+                }
+                for (const plugin of this.plugins) {
+                    if (this.keywords) {
+                        if (plugin.title.toLowerCase().includes(this.keywords) || plugin.alias.toLowerCase().includes(this.keywords)) {
+                            arr[0].items.push(plugin)
+                        }
+                        continue
+                    }
+                    for (const v of arr) {
+                        if (plugin.category_id === v.id) {
+                            if (!v.items) {
+                                v.items = []
+                            }
+                            v.items.push(plugin)
+                            break
+                        }
                     }
                 }
-                this.currentPlugins = arr
+                if (arr.length > 0 && arr.at(-1).id !== -2 && arr.at(-1)?.items?.length === 0) {
+                    arr.pop()
+                }
+                return arr
             },
-            plugins(newVal) {
-                this.currentPlugins = newVal
-            },
-            keywords(newVal) {
-                this.currentPlugins = this.plugins.filter(v => {
-                    const keywords = newVal.trim().toLowerCase()
-                    return v.title.toLowerCase().includes(keywords) || v.alias.toLowerCase().includes(keywords)
-                })
-            }
         },
         created() {
-            this.getPlugins(this.categoryId)
+            this.getPlugins()
         },
         methods: {
-            getPlugins(categoryId) {
-                return plugins_get(categoryId, IS_STAR).then(res => {
+            getPlugins() {
+                return plugins_get(null, IS_STAR).then(res => {
                     this.plugins = res.data.items
                 })
             },
