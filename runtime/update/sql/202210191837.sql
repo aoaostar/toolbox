@@ -1,0 +1,1 @@
+INSERT INTO `toolbox_config` (`key`, `value`, `create_time`, `update_time`) VALUES ('global.chat', 'https://t.me/aoaostar', '2022-10-19 09:46:13', '2022-10-19 09:57:45');

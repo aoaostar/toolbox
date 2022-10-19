@@ -43,15 +43,16 @@ INSERT INTO `toolbox_config` VALUES (5, 'global.template', 'default', '2021-12-2
 INSERT INTO `toolbox_config` VALUES (6, 'global.foot_code', '\n            <div style=\"display: none\">\n                <script type=\"text/javascript\" src=\"https://s9.cnzz.com/z_stat.php?id=1280727911&web_id=1280727911\"></script>\n            </div>', '2021-12-22 21:34:41', '2022-09-05 15:50:47');
 INSERT INTO `toolbox_config` VALUES (7, 'global.admin_path', 'admin', '2021-12-22 18:31:59', '2022-09-05 16:38:45');
 INSERT INTO `toolbox_config` VALUES (8, 'global.secret_key', '8T7SHDiZFEY443f4GHicAmtxFsZw6FEi', '2022-09-03 13:42:20', '2022-09-09 09:55:09');
-INSERT INTO `toolbox_config` VALUES (9, 'cdn.cdnjs', 'https://cdn.staticfile.org', '2022-03-02 17:56:15', '2022-03-02 17:56:15');
-INSERT INTO `toolbox_config` VALUES (10, 'cdn.npm', 'https://npm.elemecdn.com', '2022-03-02 17:56:15', '2022-03-02 18:13:43');
-INSERT INTO `toolbox_config` VALUES (11, 'cloud.mirror', 'https://github.com/{owner}/{repo}/raw/{branch}/{path}', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
-INSERT INTO `toolbox_config` VALUES (12, 'oauth.github.enable', '1', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
-INSERT INTO `toolbox_config` VALUES (13, 'oauth.github.client_id', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
-INSERT INTO `toolbox_config` VALUES (14, 'oauth.gitee.client_secret', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
-INSERT INTO `toolbox_config` VALUES (15, 'oauth.gitee.enable', '0', '2021-12-22 18:31:59', '2022-09-09 22:28:34');
-INSERT INTO `toolbox_config` VALUES (16, 'oauth.gitee.client_id', '', '2022-09-09 11:37:42', '2022-09-09 11:37:48');
-INSERT INTO `toolbox_config` VALUES (17, 'oauth.github.client_secret', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (9, 'global.chat', 'https://t.me/aoaostar', '2022-09-03 13:42:20', '2022-09-09 09:55:09');
+INSERT INTO `toolbox_config` VALUES (10, 'cdn.cdnjs', 'https://cdn.staticfile.org', '2022-03-02 17:56:15', '2022-03-02 17:56:15');
+INSERT INTO `toolbox_config` VALUES (11, 'cdn.npm', 'https://npm.elemecdn.com', '2022-03-02 17:56:15', '2022-03-02 18:13:43');
+INSERT INTO `toolbox_config` VALUES (12, 'cloud.mirror', 'https://github.com/{owner}/{repo}/raw/{branch}/{path}', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (13, 'oauth.github.enable', '1', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (14, 'oauth.github.client_id', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (15, 'oauth.gitee.client_secret', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
+INSERT INTO `toolbox_config` VALUES (16, 'oauth.gitee.enable', '0', '2021-12-22 18:31:59', '2022-09-09 22:28:34');
+INSERT INTO `toolbox_config` VALUES (17, 'oauth.gitee.client_id', '', '2022-09-09 11:37:42', '2022-09-09 11:37:48');
+INSERT INTO `toolbox_config` VALUES (18, 'oauth.github.client_secret', '', '2021-12-22 18:31:59', '2021-12-22 18:31:59');
 
 -- ----------------------------
 -- Table structure for toolbox_migration
