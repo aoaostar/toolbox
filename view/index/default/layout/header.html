@@ -15,7 +15,8 @@
                 </svg>
                 Stars
             </a>
-            <a target="_blank" href="https://t.me/aoaostar" class="btn btn-ghost btn-sm rounded-btn">
+            {if !empty($app.chat)}
+            <a target="_blank" href="{$app.chat}" class="btn btn-ghost btn-sm rounded-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                      class="inline-block w-5 mr-2 stroke-current">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -23,6 +24,7 @@
                 </svg>
                 Chat
             </a>
+            {/if}
             {include file="layout/change_theme" /}
             {if(is_login())}
             <div class="dropdown dropdown-end">
@@ -105,7 +107,8 @@
                     </svg>
                     Stars
                 </a>
-                <a target="_blank" href="https://t.me/aoaostar"
+                {if !empty($app.chat)}
+                <a target="_blank" href="{$app.chat}"
                    class="btn btn-ghost btn-sm rounded-btn justify-start order-3">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                          class="inline-block w-5 mr-2 stroke-current">
@@ -114,6 +117,7 @@
                     </svg>
                     Chat
                 </a>
+                {/if}
 
                 {if(is_login())}
                 <button class="btn btn-ghost btn-sm rounded-btn justify-start order-first truncate">
