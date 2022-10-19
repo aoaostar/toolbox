@@ -10,7 +10,7 @@ instance.interceptors.response.use(function (response) {
         $message.error(
             response.data.message
         );
-        return Promise.reject(response.data.message)
+        return Promise.reject(response.data)
     }
     return response.data
 }, function (error) {
