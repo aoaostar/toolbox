@@ -97,19 +97,6 @@ const changeDownloadSpeed = (filesize) => {
     filesize = changeFilesize(filesize);
     return filesize.replace(/\s([K|M|G|B]*)B{0,1}/, '$1/s')
 }
-window.onscroll = function () {
-    var scrollTop = document.documentElement.scrollTop ?
-        document.documentElement.scrollTop :
-        document.body.scrollTop;
-    let dom = document.getElementById('back-to-top')
-    if (dom) {
-        if (scrollTop > 200) {
-            dom.style.visibility = "visible"
-        } else {
-            dom.style.visibility = "hidden"
-        }
-    }
-}
 
 const scrollTopSmooth = () => {
     const easeout = (position, destination, rate, callback) => {
@@ -142,6 +129,7 @@ const scrollTopSmooth = () => {
         window.scrollTo(0, val);
     });
 }
+
 const copy = (text) => {
     let oInput = document.createElement('textarea');
     oInput.value = text;
@@ -152,7 +140,6 @@ const copy = (text) => {
     oInput.style.display = 'none';
     oInput.remove();
 }
-
 
 const $message = {
     success: (message) => {
