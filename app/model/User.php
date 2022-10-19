@@ -18,43 +18,17 @@ use think\Model;
  * @property string $username 用户名
  * @mixin \think\Model
  */
-class User extends Model
+class User extends Base
 {
     protected $json = ['stars', 'oauth'];
     protected $jsonAssoc = true;
 
+    protected $searchField = ['username'];
+
+
     public static function onAfterRead(Model $model)
     {
         $model->avatar = avatar_cdn($model->avatar);
-    }
-
-    public static function pagination($param)
-    {
-        $where = [];
-        if (!empty($param['username'])) {
-            $where[] = ["username", 'like', '%' . $param['username'] . '%'];
-        }
-        if (!empty($param['id'])) {
-            $where[] = ["id", 'like', '%' . $param['id'] . '%'];
-        }
-        $page = 1;
-        $limit = 10;
-        if (!empty($param['page'])) {
-            $page = intval($param['page']);
-        }
-        if (!empty($param['limit'])) {
-            $limit = intval($param['limit']);
-        }
-
-        $plugin = new User();
-        $total = $plugin->count();
-        $select = $plugin->page($page)->limit($limit)->where($where)->select();
-
-        $data = [
-            'total' => $total,
-            'items' => $select,
-        ];
-        return $data;
     }
 
     public static function get($id)

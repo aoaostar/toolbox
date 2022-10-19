@@ -24,7 +24,7 @@ class User extends Base
             return error($validate->getError());
         }
 
-        $select = \app\model\User::pagination($params);
+        $select = (new \app\model\User)->pagination($params);
 
         return msg("ok", "success", $select);
     }
