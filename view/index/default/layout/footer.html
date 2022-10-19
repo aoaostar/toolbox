@@ -52,5 +52,12 @@
             }
         }
     }
+
+    window.addEventListener("keydown", (e) => {
+        if (e.code === 'F3' || ((e.ctrlKey || e.metaKey) && e.code === 'KeyF')) {
+            e.preventDefault();
+            document.querySelector('#search')?.focus()
+        }
+    })
 </script>
 {$app.foot_code|raw}
