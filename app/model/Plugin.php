@@ -86,6 +86,7 @@ class Plugin extends Base
                     unset($selects['items'][$k]);
                 }
             }
+            $selects['items'] = $selects['items']->values();
         }
         return $selects;
     }
