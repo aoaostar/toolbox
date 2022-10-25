@@ -25,10 +25,9 @@ class User extends Base
 
     protected $searchField = ['username'];
 
-
-    public static function onAfterRead(Model $model)
+    public function getAvatarAttr($value)
     {
-        $model->avatar = avatar_cdn($model->avatar);
+        return avatar_cdn($value);
     }
 
     public static function get($id)
@@ -45,7 +44,7 @@ class User extends Base
     {
 
         $user = self::getUser();
-        return $user !== null && !empty($user->id) && $user->isExists();
+        return !empty($user->id) && $user->isExists();
     }
 
     public static function isAdmin($user = null): bool
