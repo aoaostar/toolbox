@@ -4,7 +4,6 @@
 namespace app\controller;
 
 
-use app\lib\oauth\Permission;
 use app\model\User;
 use think\facade\Request;
 use think\facade\Session;
@@ -13,7 +12,7 @@ use think\helper\Str;
 
 class Auth extends Base
 {
-    private $instance = Permission::class;
+    private $instance;
     private $mode;
     private $user;
 
@@ -47,7 +46,7 @@ class Auth extends Base
         return $this->instance->oauth();
     }
 
-    public function callback()
+    public function callback(): \think\response\View
     {
         $bind = Session::pull('BindAuth');
 
