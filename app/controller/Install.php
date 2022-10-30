@@ -15,16 +15,18 @@ class Install extends Base
 {
     const PHP_VERSION = '7.2.5';
     const MYSQL_VERSION = '5.7';
+    private $installed = true;
 
     public function __destruct()
     {
-        clear_cache(true);
+        !$this->installed && clear_cache(true);
     }
 
     public function initialize()
     {
         // 检测是否已安装
-        if (file_exists(app()->getRootPath() . 'install.lock')) {
+        $this->installed = file_exists(app()->getRootPath() . 'install.lock');
+        if ($this->installed) {
             exit('你已安装成功，需要重新安装请删除 install.lock 文件');
         }
         clear_cache(true);
