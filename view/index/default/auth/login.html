@@ -57,13 +57,18 @@
         // # 通过监听，父页面可以拿到子页面传递的token，父(前端页面)，子(小窗)
         window.addEventListener('message', function (e) {
             const data = e.data.data
+            if (e.data.status !== 'ok') {
+                $message.error(e.data.message)
+                return;
+            }
             if (data?.access_token?.length > 0) {
                 localStorage.setItem("ACCESS-TOKEN", JSON.stringify({
                     value: data.access_token,
                     expire: data.expire * 1000,
                 }))
+                window.location.href = '/'
             }
-            window.location.href = '/'
+            $message.error('登录失败，请联系管理员')
         }, false)
     }
 </script>

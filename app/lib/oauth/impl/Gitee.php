@@ -27,7 +27,9 @@ class Gitee implements Oauth
     public function callback(): array
     {
         if (empty($this->params->code)) {
-            return [];
+            return [
+                'error' => '回调code异常',
+            ];
         }
         $url = 'https://gitee.com/oauth/token?grant_type=authorization_code';
         $arr = [
@@ -56,7 +58,19 @@ class Gitee implements Oauth
                 ];
             }
         }
-        return [];
+        if (!empty($json_decode->error_description)) {
+            return [
+                'error' => $json_decode->error_description,
+            ];
+        }
+        if (!empty($json_decode->error)) {
+            return [
+                'error' => $json_decode->error,
+            ];
+        }
+        return [
+            'error' => '未知异常',
+        ];
     }
 
 }

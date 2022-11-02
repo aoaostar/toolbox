@@ -95,12 +95,15 @@ class Auth extends Base
                 'expire' => $instance->getExpire(),
             ]);
         }
+        if (!empty($user->error)){
+
+            return $this->callback_view('error', $user->error);
+        }
         return $this->callback_view('error', "登录失败，请重试");
     }
 
     private function callback_view($status, $message, $data = [])
     {
-
         View::assign('data', [
             'status' => $status,
             'message' => $message,
