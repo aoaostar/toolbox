@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\lib\permission;
+namespace permission;
 
 
 use app\model\Plugin;

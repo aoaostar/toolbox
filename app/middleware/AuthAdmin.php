@@ -13,7 +13,7 @@ class AuthAdmin
     {
         if (!is_admin()) {
             if ($request->isAjax() || !$request->isGet()) {
-                $token = Request::header('Authorization', '');
+                $token = Request::header('Authorization');
                 if (empty($token)) {
                     return error('请登录')->code(401);
                 }

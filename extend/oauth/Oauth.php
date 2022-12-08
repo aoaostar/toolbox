@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\lib\oauth;
+namespace oauth;
 
 
 use think\Response;

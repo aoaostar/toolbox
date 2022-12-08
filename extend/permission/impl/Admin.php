@@ -1,10 +1,10 @@
 <?php
 
 
-namespace app\lib\permission\impl;
+namespace permission\impl;
 
 
-use app\lib\permission\Permission;
+use permission\Permission;
 
 class Admin implements Permission
 {

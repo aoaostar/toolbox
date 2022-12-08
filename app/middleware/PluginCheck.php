@@ -19,7 +19,7 @@ class PluginCheck
 
         if (!empty($plugin->permission) && !is_admin()) {
             $permission = Str::studly(strtolower($plugin->permission));
-            $class = "\\app\\lib\\permission\\impl\\{$permission}";
+            $class = "\\permission\\impl\\{$permission}";
             if (!class_exists($class)) {
                 abort(400, "该 permission[{$plugin->permission}] 未实现，请实现后重试");
             }

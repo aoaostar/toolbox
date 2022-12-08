@@ -5,18 +5,22 @@ namespace app\middleware;
 
 
 use app\model\Category;
+use Closure;
 use think\facade\Cache;
+use think\Request;
+use Throwable;
 
 class View
 {
     /**
      * 处理请求
      *
-     * @param \think\Request $request
-     * @param \Closure $next
+     * @param Request $request
+     * @param Closure $next
      * @return Response
+     * @throws Throwable
      */
-    public function handle($request, \Closure $next)
+    public function handle($request, Closure $next)
     {
         $response = $next($request);
         $categories = Cache::remember(__METHOD__ . '__category', function () {

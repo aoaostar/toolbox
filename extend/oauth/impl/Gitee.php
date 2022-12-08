@@ -1,13 +1,13 @@
 <?php
 
 
-namespace app\lib\oauth\impl;
+namespace oauth\impl;
 
-use app\lib\oauth\Oauth;
 use GuzzleHttp\Exception\GuzzleException;
+use oauth\Oauth;
 use think\Response;
 
-class Github implements Oauth
+class Gitee implements Oauth
 {
     private $config;
     private $params;
@@ -17,52 +17,52 @@ class Github implements Oauth
     {
         $this->config = $config;
         $this->params = $params;
-        $this->redirect_uri = (string)url('/oauth/callback/github', [], '', true);;
+        $this->redirect_uri = (string)url('/oauth/callback/gitee', [], '', true);;
     }
 
     public function oauth(): Response
     {
-        return redirect('https://github.com/login/oauth/authorize?client_id=' . $this->config->client_id . '&redirect_uri=' . $this->redirect_uri);
+        return redirect('https://gitee.com/oauth/authorize?client_id=' . $this->config->client_id . '&redirect_uri=' . $this->redirect_uri . '&response_type=code');
     }
 
     public function callback(): array
     {
-
         if (empty($this->params->code)) {
             return [
                 'error' => '回调code异常',
             ];
         }
-        $url = 'https://github.com/login/oauth/access_token';
+        $url = 'https://gitee.com/oauth/token?grant_type=authorization_code';
         $arr = [
             'client_id' => $this->config->client_id,
             'client_secret' => $this->config->client_secret,
             'code' => $this->params->code,
+            'redirect_uri' => $this->redirect_uri,
         ];
 
         try {
             $resp = aoaostar_post($url, $arr);
             if (!empty($resp) && !empty($resp->access_token)) {
-                $resp = aoaostar_get('https://api.github.com/user', [
+                $json_decode = aoaostar_get('https://gitee.com/api/v5/user', [
                     'Authorization' => "token $resp->access_token"
                 ]);
 
-                if (!empty($resp) && !empty($resp->id)) {
+                if (!empty($json_decode) && !empty($json_decode->id)) {
                     return [
-                        'id' => $resp->id,
-                        'username' => $resp->login,
-                        'avatar' => $resp->avatar_url,
+                        'id' => $json_decode->id,
+                        'username' => $json_decode->login,
+                        'avatar' => $json_decode->avatar_url,
                     ];
                 }
             }
-            if (!empty($resp->error_description)) {
+            if (!empty($json_decode->error_description)) {
                 return [
-                    'error' => $resp->error_description,
+                    'error' => $json_decode->error_description,
                 ];
             }
-            if (!empty($resp->error)) {
+            if (!empty($json_decode->error)) {
                 return [
-                    'error' => $resp->error,
+                    'error' => $json_decode->error,
                 ];
             }
             return [
@@ -73,6 +73,7 @@ class Github implements Oauth
                 'error' => $e->getMessage(),
             ];
         }
+
     }
 
 }

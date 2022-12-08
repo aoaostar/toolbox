@@ -25,7 +25,7 @@ class Auth extends Base
             if (!in_array($this->mode, get_enabled_oauth_mode())) {
                 abort(400, '不支持该认证方式 ' . Str::studly($this->mode));
             }
-            $class = '\\app\\lib\\oauth\\impl\\' . Str::studly($this->mode);
+            $class = '\\oauth\\impl\\' . Str::studly($this->mode);
             if (!class_exists($class)) {
                 abort(400, '不支持该认证方式 ' . Str::studly($this->mode));
             }

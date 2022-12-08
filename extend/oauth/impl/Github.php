@@ -1,13 +1,13 @@
 <?php
 
 
-namespace app\lib\oauth\impl;
+namespace oauth\impl;
 
-use app\lib\oauth\Oauth;
 use GuzzleHttp\Exception\GuzzleException;
+use oauth\Oauth;
 use think\Response;
 
-class Gitee implements Oauth
+class Github implements Oauth
 {
     private $config;
     private $params;
@@ -17,52 +17,52 @@ class Gitee implements Oauth
     {
         $this->config = $config;
         $this->params = $params;
-        $this->redirect_uri = (string)url('/oauth/callback/gitee', [], '', true);;
+        $this->redirect_uri = (string)url('/oauth/callback/github', [], '', true);;
     }
 
     public function oauth(): Response
     {
-        return redirect('https://gitee.com/oauth/authorize?client_id=' . $this->config->client_id . '&redirect_uri=' . $this->redirect_uri . '&response_type=code');
+        return redirect('https://github.com/login/oauth/authorize?client_id=' . $this->config->client_id . '&redirect_uri=' . $this->redirect_uri);
     }
 
     public function callback(): array
     {
+
         if (empty($this->params->code)) {
             return [
                 'error' => '回调code异常',
             ];
         }
-        $url = 'https://gitee.com/oauth/token?grant_type=authorization_code';
+        $url = 'https://github.com/login/oauth/access_token';
         $arr = [
             'client_id' => $this->config->client_id,
             'client_secret' => $this->config->client_secret,
             'code' => $this->params->code,
-            'redirect_uri' => $this->redirect_uri,
         ];
 
         try {
             $resp = aoaostar_post($url, $arr);
             if (!empty($resp) && !empty($resp->access_token)) {
-                $json_decode = aoaostar_get('https://gitee.com/api/v5/user', [
+                $resp = aoaostar_get('https://api.github.com/user', [
                     'Authorization' => "token $resp->access_token"
                 ]);
 
-                if (!empty($json_decode) && !empty($json_decode->id)) {
+                if (!empty($resp) && !empty($resp->id)) {
                     return [
-                        'id' => $json_decode->id,
-                        'username' => $json_decode->login,
-                        'avatar' => $json_decode->avatar_url,
+                        'id' => $resp->id,
+                        'username' => $resp->login,
+                        'avatar' => $resp->avatar_url,
                     ];
                 }
             }
-            if (!empty($json_decode->error_description)) {
+            if (!empty($resp->error_description)) {
                 return [
-                    'error' => $json_decode->error_description,
+                    'error' => $resp->error_description,
                 ];
             }
-            if (!empty($json_decode->error)) {
+            if (!empty($resp->error)) {
                 return [
-                    'error' => $json_decode->error,
+                    'error' => $resp->error,
                 ];
             }
             return [
@@ -73,7 +73,6 @@ class Gitee implements Oauth
                 'error' => $e->getMessage(),
             ];
         }
-
     }
 
 }
