@@ -8,23 +8,24 @@ use app\model\Config;
 use think\facade\Db;
 use think\facade\Request;
 use think\helper\Str;
+use think\response\Json;
 
 class System extends BaseController
 {
-    public function all()
+    public function all(): Json
     {
         $all = Config::all();
         return success($all);
     }
 
-    public function get()
+    public function get(): Json
     {
         $key = Request::param('key');
         $all = config_get($key);
         return success($all);
     }
 
-    public function update()
+    public function update(): Json
     {
 
         $params = Request::param();
@@ -33,7 +34,7 @@ class System extends BaseController
             if (empty($v['key'])) {
                 continue;
             }
-            $model = \app\model\Config::getByKey($v['key']);
+            $model = Config::getByKey($v['key']);
             $model->data([
                 'key' => $v['key'],
                 'value' => $v['value'],
@@ -43,7 +44,7 @@ class System extends BaseController
         return success($all);
     }
 
-    public function info()
+    public function info(): Json
     {
 
         $tmp = 'version()';
@@ -62,19 +63,19 @@ class System extends BaseController
         return success($data);
     }
 
-    public function templates()
+    public function templates(): Json
     {
         $glob = glob(root_path() . config("view.view_dir_name") . '/index/*');
         $arr = [];
         foreach ($glob as $v) {
             if (is_dir($v)) {
-                array_push($arr, basename($v));
+                $arr[] = basename($v);
             }
         }
         return success($arr);
     }
 
-    public function plugin_templates()
+    public function plugin_templates(): Json
     {
         $glob = glob(template_path_get() . '/template/*');
         $arr = [
@@ -82,19 +83,19 @@ class System extends BaseController
         ];
         foreach ($glob as $v) {
             if (is_file($v)) {
-                array_push($arr, basename($v, '.html'));
+                $arr[] = basename($v, '.html');
             }
         }
         return success($arr);
     }
 
-    public function permissions()
+    public function permissions(): Json
     {
         $glob = glob(app_path() . '/lib/permission/impl/*');
         $arr = [];
         foreach ($glob as $v) {
             if (is_file($v)) {
-                array_push($arr, Str::snake(basename($v, '.php')));
+                $arr[] = Str::snake(basename($v, '.php'));
             }
         }
         return success($arr);

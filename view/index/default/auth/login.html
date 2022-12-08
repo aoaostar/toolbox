@@ -67,6 +67,7 @@
                     expire: data.expire * 1000,
                 }))
                 window.location.href = '/'
+                return;
             }
             $message.error('登录失败，请联系管理员')
         }, false)

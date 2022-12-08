@@ -6,9 +6,12 @@ namespace app\controller\master;
 
 use app\controller\Base;
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use think\Collection;
 use think\facade\Cache;
 use think\facade\Request;
+use think\response\Json;
+use Throwable;
 
 class Cloud extends Base
 {
@@ -30,7 +33,7 @@ class Cloud extends Base
         ];
     }
 
-    public function categories()
+    public function categories(): Json
     {
         try {
 
@@ -38,19 +41,19 @@ class Cloud extends Base
 
             return success($json->data);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return error($e->getMessage());
         }
     }
 
-    public function plugins()
+    public function plugins(): Json
     {
 
         try {
             $json = $this->get_remote_data(__METHOD__, $this->PLUGINS_API);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return error($e->getMessage());
         }
@@ -108,7 +111,7 @@ class Cloud extends Base
         return success($json->data);
     }
 
-    public function releases()
+    public function releases(): Json
     {
 
         try {
@@ -121,13 +124,13 @@ class Cloud extends Base
 
             return success($json->data);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return error($e->getMessage());
         }
     }
 
-    public function plugin_get()
+    public function plugin_get(): Json
     {
         $id = Request::param('id');
 
@@ -138,7 +141,7 @@ class Cloud extends Base
                 'id' => 'require|number',
             ]);
             $json = $this->get_plugin_info($id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return error($e->getMessage());
         }
@@ -151,7 +154,7 @@ class Cloud extends Base
         return success($json->data);
     }
 
-    public function plugin_install()
+    public function plugin_install(): Json
     {
         $id = Request::param('id');
 
@@ -162,7 +165,7 @@ class Cloud extends Base
                 'id' => 'require|number',
             ]);
             $json = $this->get_plugin_info($id);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 
             return error($e->getMessage());
         }
@@ -180,10 +183,14 @@ class Cloud extends Base
         $arr = array_keys(get_object_vars($file));
 
         foreach ($arr as $v) {
-            $downloadUrl = str_ireplace("{{$v}}", $file->$v, $downloadUrl);
+            $downloadUrl = str_ireplace("{$v}", $file->$v, $downloadUrl);
         }
 
-        $data = aoaostar_get($downloadUrl);
+        try {
+            $data = aoaostar_get($downloadUrl, [], false);
+        } catch (GuzzleException $e) {
+            return error($e->getMessage());
+        }
 
         if (empty($data) || str_starts_with($data, 'CURL Error:')) {
             return error("下载插件包失败", $data);
@@ -202,11 +209,13 @@ class Cloud extends Base
         return $this->get_remote_data(__METHOD__ . '__' . $id, "$this->PLUGIN_API?$query");
     }
 
+    /**
+     * @throws Throwable
+     */
     private function get_remote_data($key, $url)
     {
         return Cache::remember($key, function () use ($url) {
-            $res = aoaostar_get($url, $this->HEADERS);
-            $json = json_decode($res);
+            $json = aoaostar_get($url, $this->HEADERS);
             if (empty($json) || empty($json->data)) {
                 if (!empty($json->message)) {
                     throw  new Exception($json->message);

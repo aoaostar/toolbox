@@ -5,11 +5,13 @@ namespace app\controller;
 
 use app\lib\EnvOperation;
 use app\lib\ExecSQL;
+use GuzzleHttp\Exception\GuzzleException;
 use PDO;
 use think\Exception;
 use think\facade\Request;
 use think\facade\Validate;
 use think\facade\View;
+use think\response\Json;
 
 class Install extends Base
 {
@@ -32,7 +34,7 @@ class Install extends Base
         clear_cache(true);
     }
 
-    public function index()
+    public function index(): \think\response\View
     {
         // 检查安装环境
         $requirements = [
@@ -53,7 +55,7 @@ class Install extends Base
         return view('../view/install/index.html');
     }
 
-    public function database()
+    public function database(): Json
     {
         $params = Request::param();
         $rules = [
@@ -92,7 +94,7 @@ class Install extends Base
         return success();
     }
 
-    public function init_data()
+    public function init_data(): Json
     {
         try {
             $filename = app()->getRootPath() . 'install.sql';
@@ -117,7 +119,7 @@ class Install extends Base
         return success();
     }
 
-    public function oauth()
+    public function oauth(): Json
     {
         $params = Request::param();
         $rules = [

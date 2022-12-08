@@ -32,7 +32,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4">
             <div class="card text-center shadow-lg"
-                 v-for="item,key in plugin.items" :key="key">
+                 v-for="item,key in plugin.items" :key="item.id">
                 <div class="card-body">
                     <div class=" flex flex-row">
                         <div class="avatar w-1/4">
@@ -86,7 +86,8 @@
     </div>
 
 </div>
-
+{/block}
+{block name="footer"}
 <script>
     new Vue({
         el: '#app',

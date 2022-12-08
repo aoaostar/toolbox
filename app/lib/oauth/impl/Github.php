@@ -4,6 +4,7 @@
 namespace app\lib\oauth\impl;
 
 use app\lib\oauth\Oauth;
+use GuzzleHttp\Exception\GuzzleException;
 use think\Response;
 
 class Github implements Oauth
@@ -39,37 +40,39 @@ class Github implements Oauth
             'code' => $this->params->code,
         ];
 
-        $res = aoaostar_post($url, $arr, [
-            'Accept: application/json',
-        ]);
-        $json_decode = json_decode($res);
-        if (!empty($json_decode) && !empty($json_decode->access_token)) {
-            $aoaostar_get = aoaostar_get('https://api.github.com/user', [
-                "Authorization: token $json_decode->access_token"
-            ]);
+        try {
+            $resp = aoaostar_post($url, $arr);
+            if (!empty($resp) && !empty($resp->access_token)) {
+                $resp = aoaostar_get('https://api.github.com/user', [
+                    'Authorization' => "token $resp->access_token"
+                ]);
 
-            $json_decode = json_decode($aoaostar_get);
-            if (!empty($json_decode) && !empty($json_decode->id)) {
+                if (!empty($resp) && !empty($resp->id)) {
+                    return [
+                        'id' => $resp->id,
+                        'username' => $resp->login,
+                        'avatar' => $resp->avatar_url,
+                    ];
+                }
+            }
+            if (!empty($resp->error_description)) {
                 return [
-                    'id' => $json_decode->id,
-                    'username' => $json_decode->login,
-                    'avatar' => $json_decode->avatar_url,
+                    'error' => $resp->error_description,
                 ];
             }
-        }
-        if (!empty($json_decode->error_description)) {
+            if (!empty($resp->error)) {
+                return [
+                    'error' => $resp->error,
+                ];
+            }
             return [
-                'error' => $json_decode->error_description,
+                'error' => '未知异常',
+            ];
+        } catch (GuzzleException $e) {
+            return [
+                'error' => $e->getMessage(),
             ];
         }
-        if (!empty($json_decode->error)) {
-            return [
-                'error' => $json_decode->error,
-            ];
-        }
-        return [
-            'error' => '未知异常',
-        ];
     }
 
 }

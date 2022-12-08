@@ -1,9 +1,13 @@
 <?php
 // 应用公共文件
 
+use app\model\Config;
 use app\model\User;
+use GuzzleHttp\Exception\GuzzleException;
 use think\facade\Cache;
+use think\facade\Env;
 use think\helper\Str;
+use think\response\Json;
 
 require dirname(__DIR__) . "/plugin/common.php";
 
@@ -12,7 +16,7 @@ function template_path_get(): string
     return app()->getRootPath() . config("view.view_dir_name") . '/index/' . config_get('global.template') . DIRECTORY_SEPARATOR;
 }
 
-function msg($status = "ok", $message = "success", $data = [])
+function msg($status = "ok", $message = "success", $data = []): Json
 {
     return json([
         "status" => $status,
@@ -21,41 +25,41 @@ function msg($status = "ok", $message = "success", $data = [])
     ]);
 }
 
-function success($data = [], $message = "success")
+function success($data = [], $message = "success"): Json
 {
     return msg('ok', $message, $data);
 }
 
-function error($message = "error", $data = [])
+function error($message = "error", $data = []): Json
 {
     return msg('error', $message, $data);
 }
 
-function is_login()
+function is_login(): bool
 {
     return User::isLogin();
 }
 
-function get_user()
+function get_user(): User
 {
     return User::getUser();
 }
 
-function get_username()
+function get_username(): string
 {
     return get_user()->username;
 }
 
-function is_admin($user = null)
+function is_admin($user = null): bool
 {
-    return User::isAdmin();
+    return User::isAdmin($user);
 }
 
 
-function get_master_path($path = '')
+function get_master_path($path = ''): string
 {
-    $path = trim($path, '\\//');
-    $adminPath = trim(config_get('global.admin_path'), '\\//');
+    $path = trim($path, '\\/');
+    $adminPath = trim(config_get('global.admin_path'), '\\/');
     if (!empty($path)) {
         $adminPath .= "/$path";
     }
@@ -75,83 +79,75 @@ function clear_cache($flag = false)
     }
 }
 
-function aoaostar_get($url, $headers = [])
+/**
+ * @throws GuzzleException
+ */
+function aoaostar_get(
+    $url,
+    $headers = [],
+    $json = true
+)
 {
+    $client = new \GuzzleHttp\Client();
+    $response = $client->request('GET', $url, [
+        "headers" => array_merge([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+        ], $headers),
+        "proxy" => Env::get('app.proxy'),
+        "verify" => false,
+        "timeout" => 10,
+    ]);
+    $contents = $response->getBody()->getContents();
 
-    $headers = array_merge([
-        'User-Agent:Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50',
-    ], $headers);
-    // 创建一个新 cURL 资源
-    $curl = curl_init();
-    // 设置URL和相应的选项
-    // 需要获取的 URL 地址
-    curl_setopt($curl, CURLOPT_URL, $url);
-    #启用时会将头文件的信息作为数据流输出。
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
-    #在尝试连接时等待的秒数。设置为 0，则无限等待。
-    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
-    #允许 cURL 函数执行的最长秒数。
-    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-    #关闭ssl
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-    #TRUE 将 curl_exec获取的信息以字符串返回，而不是直接输出。
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    #设置header
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    // 跟踪重定向
-    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
-    // 抓取 URL 并把它传递给浏览器
-    $res = curl_exec($curl);
-    // 关闭 cURL 资源，并且释放系统资源
-    if ($res === false) {
-        return "CURL Error:" . curl_error($curl);
+    if ($json) {
+        return json_decode($contents);
     }
-    curl_close($curl);
-    return $res;
+    return $contents;
 }
 
+/**
+ * @throws GuzzleException
+ */
 function aoaostar_post(
     $url,
     $post,
-    $headers = []
+    $headers = [],
+    $json = true
 )
 {
-    // 初始化
-    $headers = array_merge([
-        'User-Agent:Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50',
-    ], $headers);
-    // 创建一个新 cURL 资源
-    $curl = curl_init();
-    // 设置URL和相应的选项
-    // 需要获取的 URL 地址
-    curl_setopt($curl, CURLOPT_URL, $url);
-    #启用时会将头文件的信息作为数据流输出。
-    curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
-    #设置头部信息
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-    #在尝试连接时等待的秒数。设置为 0，则无限等待。
-    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);
-    #允许 cURL 函数执行的最长秒数。
-    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-    #设置请求信息
-    //设置post方式提交
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-    #关闭ssl
-    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-    #TRUE 将 curl_exec获取的信息以字符串返回，而不是直接输出。
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    // 抓取 URL 并把它传递给浏览器
-    $return = curl_exec($curl);
-    if ($return === false) {
-        return 'CURL Error:' . curl_error($curl);
+    $client = new \GuzzleHttp\Client();
+    $options = [
+        "headers" => array_merge([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36',
+            'Accept' => 'application/json',
+        ], $headers),
+        "proxy" => Env::get('app.proxy'),
+        "verify" => false,
+        "timeout" => 10,
+        "json" => $post,
+    ];
+    foreach ($headers as $k => $v) {
+        if (strtolower($k) === 'content-type') {
+            unset($options['json']);
+            switch ($v) {
+                case 'application/x-www-form-urlencoded':
+                    $options['form_params'] = $post;
+                    break;
+                case 'multipart/form-data':
+                    $options['multipart'] = $post;
+                    break;
+                default:
+                    $options['json'] = $post;
+            }
+        }
     }
-    curl_close($curl);
-    return $return;
+    $response = $client->request('POST', $url, $options);
+    $contents = $response->getBody()->getContents();
+
+    if ($json) {
+        return json_decode($contents);
+    }
+    return $contents;
 }
 
 function aoaostar_curl($url, $put, $headers = [],
@@ -169,7 +165,7 @@ function aoaostar_curl($url, $put, $headers = [],
     curl_setopt($curl, CURLOPT_URL, $url);
     #启用时会将头文件的信息作为数据流输出。
     curl_setopt($curl, CURLOPT_HEADER, false);
-    curl_setopt($curl, CURLOPT_PROXY, \think\facade\Env::get('app.proxy'));
+    curl_setopt($curl, CURLOPT_PROXY, Env::get('app.proxy'));
     #设置头部信息
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
     #在尝试连接时等待的秒数。设置为 0，则无限等待。
@@ -193,7 +189,7 @@ function aoaostar_curl($url, $put, $headers = [],
     return $return;
 }
 
-function unzip($filepath, $filename)
+function unzip($filepath, $filename): bool
 {
     if (!file_exists($filepath)) {
         return false;
@@ -209,7 +205,7 @@ function unzip($filepath, $filename)
 }
 
 //多维转一维数组
-function multi2one($data, $dir = '', $step = '')
+function multi2one($data, $dir = '', $step = ''): array
 {
     $list = [];
     foreach ($data as $k => $v) {
@@ -222,7 +218,7 @@ function multi2one($data, $dir = '', $step = '')
     return $list;
 }
 
-function tree_relative($dir)
+function tree_relative($dir): array
 {
     if (!is_dir($dir)) {
         return [basename($dir)];
@@ -257,7 +253,7 @@ function copy_dir($src, $target)
     }
 }
 
-function del_tree($dir)
+function del_tree($dir): bool
 {
     if (!file_exists($dir)) {
         return true;
@@ -272,7 +268,7 @@ function del_tree($dir)
 }
 
 
-function parse_github_url($url)
+function parse_github_url($url): stdClass
 {
     $parse_url = parse_url($url);
 
@@ -293,11 +289,13 @@ function parse_github_url($url)
     return $github;
 }
 
-function tree_github($github, $type = 'tree')
+/**
+ * @throws Exception|GuzzleException
+ */
+function tree_github($github, $type = 'tree'): array
 {
     $arr = [];
-    $get = aoaostar_get("https://api.github.com/repos/$github->owner/$github->repo/contents/$github->path?ref=$github->branch");
-    $res = json_decode($get);
+    $res = aoaostar_get("https://api.github.com/repos/$github->owner/$github->repo/contents/$github->path?ref=$github->branch");
     if (empty($res)) {
         throw new Exception('请求失败');
     }
@@ -325,7 +323,7 @@ function tree_github($github, $type = 'tree')
 
 function config_get($key, $default = '')
 {
-    $model = \app\model\Config::getByKey($key);
+    $model = Config::getByKey($key);
     if (isset($model->value)) {
 
         return $model->value ?: $default;
@@ -337,15 +335,15 @@ function config_get($key, $default = '')
     return $arr ?: ($default ?: []);
 }
 
-function config_set($key, $value)
+function config_set($key, $value): bool
 {
-    $model = \app\model\Config::getByKey($key);
+    $model = Config::getByKey($key);
     $model->key = $key;
     $model->value = $value;
     return $model->save();
 }
 
-function get_version()
+function get_version(): string
 {
     return VERSION;
 }
@@ -359,37 +357,38 @@ function format_date($timestamp = null)
 }
 
 //当前命名空间的包名
-function base_space_name($space)
+function base_space_name($space): string
 {
     $str_replace = str_replace('\\', '/', $space);
     return basename($str_replace);
 }
 
-function cdnjs_cdn($file = '')
+function cdnjs_cdn($file = ''): string
 {
     $config_get = config_get('cdn.cdnjs', 'https://cdn.staticfile.org');
     return $config_get . $file;
 }
 
-function npm_cdn($file = '')
+function npm_cdn($file = ''): string
 {
     $config_get = config_get('cdn.npm', 'https://cdn.jsdelivr.net/npm');
     return $config_get . $file;
 }
 
-function captcha_api()
+function captcha_api(): string
 {
     return (string)url('/api/captcha');
 }
 
 if (!function_exists('str_contains')) {
-    function str_contains($haystack, $needle) {
+    function str_contains($haystack, $needle): bool
+    {
         return $needle !== '' && mb_strpos($haystack, $needle) !== false;
     }
 }
 
 if (!function_exists('str_starts_with')) {
-    function str_starts_with($str, $start)
+    function str_starts_with($str, $start): bool
     {
         return (@substr_compare($str, $start, 0, strlen($start)) == 0);
     }
@@ -405,12 +404,12 @@ if (!function_exists('str_ends_with')) {
 
 if (!function_exists('is_valid_url')) {
 
-    function is_valid_url($url = null)
+    function is_valid_url($url = null): bool
     {
         if (empty($url)) return false;
         if (!is_string($url)) return false;
         $filter_var = boolval(filter_var($url, FILTER_VALIDATE_URL));
-        if ($filter_var) return $filter_var;
+        if ($filter_var) return true;
         $parse_url = parse_url($url);
         $path = array_pop($parse_url);
 
@@ -431,7 +430,7 @@ if (!function_exists('client_ip')) {
 
 if (!function_exists('rand_ip')) {
 
-    function rand_ip()
+    function rand_ip(): string
     {
         return mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255) . '.' . mt_rand(1, 255);
     }
@@ -476,7 +475,7 @@ if (!function_exists('avatar_cdn')) {
 
 if (!function_exists('get_enabled_oauth_mode')) {
 
-    function get_enabled_oauth_mode()
+    function get_enabled_oauth_mode(): array
     {
         //获取oauth启用信息
         $oauth = config_get('oauth.');

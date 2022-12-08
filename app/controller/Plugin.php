@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use think\facade\View;
+use think\Response;
 
 class Plugin extends Base
 {
@@ -23,7 +24,7 @@ class Plugin extends Base
         return $app->$method();
     }
 
-    public function static()
+    public function static(): Response
     {
         $pathinfo = request()->pathinfo();
         $filename = plugin_path_get() . substr($pathinfo, strpos($pathinfo, '/'));
@@ -34,7 +35,7 @@ class Plugin extends Base
         return response(file_get_contents($filename))->contentType($mime)->cacheControl('max-age=86400');
     }
 
-    public function logo()
+    public function logo(): Response
     {
         if (request()->ext() !== 'png') {
             abort(403, 'not allow');
@@ -48,7 +49,7 @@ class Plugin extends Base
         return response(file_get_contents($filename))->contentType($mime)->cacheControl('max-age=86400');
     }
 
-    public function index()
+    public function index(): \think\response\View
     {
         $alias = plugin_alias_get();
         $path = plugin_relative_path_get($alias);

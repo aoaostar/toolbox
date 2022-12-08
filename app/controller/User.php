@@ -7,7 +7,7 @@ use think\facade\View;
 
 class User extends Base
 {
-    public function index()
+    public function index(): \think\response\View
     {
         $oauth_modes = get_enabled_oauth_mode();
 

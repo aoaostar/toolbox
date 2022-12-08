@@ -7,7 +7,10 @@ namespace app\controller\master;
 use app\controller\Base;
 use app\lib\ExecSQL;
 use app\model\Migration;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use think\facade\Request;
+use think\response\Json;
 
 class Ota extends Base
 {
@@ -19,6 +22,9 @@ class Ota extends Base
         $this->RELEASE_API = base64_decode('aHR0cHM6Ly90b29sLWNsb3VkLmFvYW9zdGFyLmNvbS9vcGVuL3JlbGVhc2U=');
     }
 
+    /**
+     * @throws Exception|GuzzleException
+     */
     private function get_last_release()
     {
 
@@ -29,38 +35,42 @@ class Ota extends Base
 
         if (empty($json) || empty($json->data)) {
             if (!empty($json->message)) {
-                throw new \Exception($json->message);
+                throw new Exception($json->message);
             }
-            throw new \Exception('"连接云中心失败，请检查网络连通性是否正常"');
+            throw new Exception('"连接云中心失败，请检查网络连通性是否正常"');
         }
         return $json;
     }
 
-    public function check()
+    public function check(): Json
     {
         try {
             $release = $this->get_last_release();
             $release->data->current_version = get_version();
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return error($e->getMessage());
 
         }
         return success($release->data);
     }
 
-    public function update()
+    public function update(): Json
     {
         try {
-            $release = $this->get_last_release();
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return error($e->getMessage());
 
         }
-        $get = aoaostar_get($release->data->download_url);
-        if (empty($get) || str_starts_with($get, 'CURL Error:')) {
-            return error('下载更新包失败，请检查网络连通性是否正常');
+        try {
+            $release = $this->get_last_release();
+            $get = aoaostar_get($release->data->download_url, [], false);
+            if (empty($get)) {
+                return error('下载更新包失败，请检查网络连通性是否正常');
+            }
+        } catch (GuzzleException $e) {
+            return error('下载更新包失败，请检查网络连通性是否正常: ' . $e->getMessage());
         }
         $tmpFilename = app()->getRuntimePath() . '/tmp/' . uniqid() . '.zip';
         if (!file_exists(dirname($tmpFilename))) {
@@ -80,12 +90,13 @@ class Ota extends Base
         }
     }
 
-    public function updateDatabase()
+    public function updateDatabase(): Json
     {
         $glob = glob(app()->getRuntimePath() . '/update/sql/*.sql');
         if (empty($glob)) {
             return msg('ok', '未发现数据库更新文件');
         }
+        $result = [];
         foreach ($glob as $value) {
             $result[$value] = [];
             $basename = basename($value);
@@ -115,12 +126,13 @@ class Ota extends Base
         return msg('ok', "数据库执行结果：\n" . implode("\n", $result));
     }
 
-    public function updateScript()
+    public function updateScript(): Json
     {
         $glob = glob(app()->getRuntimePath() . '/update/script/*.php');
         if (empty($glob)) {
             return msg('ok', '未发现更新脚本');
         }
+        $result = [];
         foreach ($glob as $value) {
             $result[$value] = [];
             $basename = basename($value);
@@ -134,16 +146,16 @@ class Ota extends Base
                 require $value;
                 $class = 'UpdateScript';
                 if (!class_exists($class)) {
-                    throw new \Exception("更新脚本不存在[$class]类");
+                    throw new Exception("更新脚本不存在[$class]类");
                 }
                 $instance = new $class();
                 $boot = 'main';
                 if (!method_exists($instance, $boot)) {
-                    throw new \Exception("更新脚本不存在[$boot]方法");
+                    throw new Exception("更新脚本不存在[$boot]方法");
                 }
                 $instance->main();
                 $result[$value] = array_merge($result[$value], $instance->getResult());
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $result[$value][] = $e->getMessage();
             }
             Migration::create([

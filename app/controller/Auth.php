@@ -9,6 +9,8 @@ use think\facade\Request;
 use think\facade\Session;
 use think\facade\View;
 use think\helper\Str;
+use think\response;
+use think\response\Redirect;
 
 class Auth extends Base
 {
@@ -33,7 +35,7 @@ class Auth extends Base
     }
 
 
-    public function oauth()
+    public function oauth(): response
     {
         //绑定账号
         if (Request::param('action') === 'bind') {
@@ -46,7 +48,7 @@ class Auth extends Base
         return $this->instance->oauth();
     }
 
-    public function callback(): \think\response\View
+    public function callback(): response\View
     {
         $bind = Session::pull('BindAuth');
 
@@ -102,7 +104,7 @@ class Auth extends Base
         return $this->callback_view('error', "登录失败，请重试");
     }
 
-    private function callback_view($status, $message, $data = [])
+    private function callback_view($status, $message, $data = []): response\View
     {
         View::assign('data', [
             'status' => $status,
@@ -120,7 +122,7 @@ class Auth extends Base
         return view();
     }
 
-    public function logout()
+    public function logout(): Redirect
     {
         Session::clear();
         return redirect('/');

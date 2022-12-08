@@ -11,6 +11,5 @@ class Base extends BaseController
     protected function initialize()
     {
         parent::initialize();
-
     }
 }

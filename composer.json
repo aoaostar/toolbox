@@ -28,7 +28,8 @@
     "ext-openssl": "*",
     "firebase/php-jwt": "^6.2",
     "ext-fileinfo": "*",
-    "topthink/think-captcha": "^3.0"
+    "topthink/think-captcha": "^3.0",
+    "guzzlehttp/guzzle": "^7.5"
   },
   "require-dev": {
     "symfony/var-dumper": "^4.2",

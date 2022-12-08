@@ -7,11 +7,12 @@ namespace app\controller\master;
 use app\controller\Base;
 use think\facade\Request;
 use think\facade\Validate;
+use think\response\Json;
 
 class User extends Base
 {
 
-    public function all()
+    public function all(): Json
     {
         $params = Request::param();
 
@@ -29,7 +30,7 @@ class User extends Base
         return msg("ok", "success", $select);
     }
 
-    public function get()
+    public function get(): Json
     {
 
         $params = Request::param();
@@ -45,7 +46,7 @@ class User extends Base
         return success($plugin);
     }
 
-    public function update()
+    public function update(): Json
     {
         $params = Request::param();
 
@@ -73,7 +74,7 @@ class User extends Base
         return success($plugin);
     }
 
-    public function delete()
+    public function delete(): Json
     {
         $params = Request::param();
 

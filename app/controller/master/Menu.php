@@ -4,10 +4,11 @@ namespace app\controller\master;
 
 
 use app\BaseController;
+use think\response\Json;
 
 class Menu extends BaseController
 {
-    public function get()
+    public function get(): Json
     {
 
         $homeInfo = [

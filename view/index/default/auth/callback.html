@@ -14,7 +14,7 @@
 <script>
 
     window.onload = function () {
-        const data = JSON.parse('{:json_encode($data)}')
+        const data = {:json_encode($data)};
         window.opener.postMessage(data, '*');
         window.close();
     }

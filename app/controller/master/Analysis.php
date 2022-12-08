@@ -7,10 +7,11 @@ namespace app\controller\master;
 use app\controller\Base;
 use app\model\Request;
 use think\facade\Cache;
+use think\response\Json;
 
 class Analysis extends Base
 {
-    public function console()
+    public function console(): Json
     {
         $arr = Cache::get(__METHOD__, []);
         if (empty($arr)) {
@@ -31,7 +32,7 @@ class Analysis extends Base
     }
 
 
-    public function traffic_trends()
+    public function traffic_trends(): Json
     {
         $arr = Cache::get(__METHOD__, []);
         if (empty($arr)) {
@@ -46,7 +47,7 @@ class Analysis extends Base
         return success($arr);
     }
 
-    public function statistics()
+    public function statistics(): Json
     {
 
         //       ['product', '2012', '2013', '2014', '2015', '2016', '2017'],

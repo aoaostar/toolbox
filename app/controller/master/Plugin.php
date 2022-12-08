@@ -4,13 +4,15 @@ namespace app\controller\master;
 
 
 use app\BaseController;
+use Exception;
 use think\facade\Db;
 use think\facade\Request;
 use think\facade\Validate;
+use think\response\Json;
 
 class Plugin extends BaseController
 {
-    public function all()
+    public function all(): Json
     {
 
         $params = Request::param();
@@ -31,7 +33,7 @@ class Plugin extends BaseController
         return success($plugins);
     }
 
-    public function get()
+    public function get(): Json
     {
 
         $params = Request::param();
@@ -47,7 +49,7 @@ class Plugin extends BaseController
         return success($plugin);
     }
 
-    public function update()
+    public function update(): Json
     {
 
         $params = Request::param();
@@ -87,7 +89,7 @@ class Plugin extends BaseController
         return success($plugin);
     }
 
-    public function create()
+    public function create(): Json
     {
         $params = Request::param();
 
@@ -125,7 +127,7 @@ class Plugin extends BaseController
         return success($plugin);
     }
 
-    public function delete()
+    public function delete(): Json
     {
         $params = Request::param();
 
@@ -156,7 +158,7 @@ class Plugin extends BaseController
             }
             // 提交事务
             Db::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // 回滚事务
             Db::rollback();
             return error($e->getMessage(), $e);
@@ -164,7 +166,7 @@ class Plugin extends BaseController
         return success();
     }
 
-    public function upload()
+    public function upload(): Json
     {
         $params = Request::file();
 
@@ -181,7 +183,7 @@ class Plugin extends BaseController
         return $plugin->install();
     }
 
-    public function update_logo()
+    public function update_logo(): Json
     {
 
         $params = Request::param();

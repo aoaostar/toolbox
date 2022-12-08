@@ -7,11 +7,12 @@ namespace app\controller\master;
 use app\controller\Base;
 use think\facade\Request;
 use think\facade\Validate;
+use think\response\Json;
 
 class Category extends Base
 {
 
-    public function all()
+    public function all(): Json
     {
         $params = Request::param();
 
@@ -28,7 +29,7 @@ class Category extends Base
         return success($select);
     }
 
-    public function get()
+    public function get(): Json
     {
 
         $params = Request::param();
@@ -44,7 +45,7 @@ class Category extends Base
         return success($plugin);
     }
 
-    public function create()
+    public function create(): Json
     {
         $params = Request::param();
 
@@ -63,7 +64,7 @@ class Category extends Base
         return success($model);
     }
 
-    public function update()
+    public function update(): Json
     {
         $params = Request::param();
 
@@ -83,7 +84,7 @@ class Category extends Base
         return success($model);
     }
 
-    public function delete()
+    public function delete(): Json
     {
         $params = Request::param();
 
