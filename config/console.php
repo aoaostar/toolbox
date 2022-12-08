@@ -5,7 +5,7 @@
 return [
     // 指令定义
     'commands' => [
-
         'plugin:package' => 'app\command\PluginPackage',
+        'plugin:logo_format' => 'app\command\PluginLogoFormat',
     ],
 ];
