@@ -1,0 +1,76 @@
+version: "3"
+services:
+  # nginx:
+  #   image: nginx:1.23.2-alpine
+  #   container_name: nginx
+  #   restart: always
+  #   ports:
+  #     - "1069:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./nginx/enable-php.conf:/etc/nginx/enable-php.conf
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     - ./www:/www
+  #   networks:
+  #     toolbox-networks:
+    
+  caddy:
+    image: caddy:2.6.2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "1069:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./www:/www
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config
+    networks:
+      toolbox-networks:
+
+  php:
+    build:
+      context: ./dockerfile
+      dockerfile: php.Dockerfile
+    container_name: fpm
+    restart: always
+    user: root
+    privileged: true
+    volumes:
+      - ./www:/www
+    networks:
+      toolbox-networks:
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    # 表示支持外部访问
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    expose: 
+       - 3306 
+    volumes:
+        - ./data/mysql:/var/lib/mysql
+    # ports:
+    #    - 3306:3306 
+    networks:
+        toolbox-networks:
+    environment:
+        MYSQL_DATABASE: toolbox
+        MYSQL_ROOT_PASSWORD: root
+
+  redis:
+    image: redis:7.0.5-alpine
+    container_name: redis
+    restart: always
+    expose: 
+       - 6379 
+    # ports:
+    #   - 6379:6379 
+    volumes:
+        - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+        toolbox-networks:
+
+networks:
+  toolbox-networks:

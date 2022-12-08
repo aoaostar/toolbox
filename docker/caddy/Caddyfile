@@ -1,0 +1,13 @@
+:80, :443
+
+root * /www/public
+
+encode gzip
+
+php_fastcgi php:9000
+
+try_files {path} {path}/ {indexfile} /index.php?s={path}
+
+try_files {path}/index.html
+
+file_server

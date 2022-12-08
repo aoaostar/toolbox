@@ -11,11 +11,15 @@
 * <https://tool.aoaostar.com>
 
 ### 🍹 演示图
+<details>
+<summary>点击展开</summary>
 
 ![](docs/images/view_1.png)
 ![](docs/images/view_2.png)
 ![](docs/images/view_4.png)
 ![](docs/images/view_3.gif)
+
+</details>
 
 ## 🎑 说明
 
@@ -27,6 +31,7 @@
 [Github Oauth 配置](docs/Github_Oauth.md)     
 [Plugin Template 使用](docs/Plugin_Template.md)      
 [Plugin Permission 使用](docs/Plugin_Permission.md)
+[Docker](docs/Docker.md)
 
 #### 演示搭建视频
 * <https://www.bilibili.com/video/BV12g411z7KL>
@@ -41,6 +46,9 @@
   必须是命令行的PHP版本，你装了多个PHP版本，命令行版本的PHP和你的网站配置的PHP可能不是同一个，嫌麻烦可以下载`full`包)
 
 ### 🚠 部署
+
+<details>
+<summary>点击展开</summary>
 
 1. 下载`Release`代码
 2. 设置运行目录为`public`
@@ -77,6 +85,8 @@
 
 8. 打开`你的域名/install`
 
+</details>
+
 #### 🍰 伪静态
 
 * Nginx
@@ -101,7 +111,7 @@ location / {
 </IfModule>
 ```
 
-### 😊 donate
+### 😊 Donate
 
 ![donate](https://www.aoaostar.com/images/donate.png)
 
