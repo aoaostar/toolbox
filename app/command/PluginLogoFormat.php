@@ -34,10 +34,8 @@ class PluginLogoFormat extends Command
             $logo = $plugin . '/logo.png';
             $image_size = getimagesize($logo);
             if ($image_size[0] !== 200 || $image_size[1] !== 200) {
+
                 switch ($image_size[2]) {
-                    case 1:
-                        $image = imagecreatefromgif($logo);
-                        break;
                     case 2:
                         $image = imagecreatefromjpeg($logo);
                         break;
@@ -45,16 +43,20 @@ class PluginLogoFormat extends Command
                         $image = imagecreatefrompng($logo);
                         break;
                     default:
-                        $image = imagecreatefromjpeg($logo);
+                        goto over;
                 }
-                $resource = imagescale($image, 200, 200);
-                imagealphablending($resource, false);
-                imagesavealpha($resource, true);
-                imagepng($resource, $logo);
-                unlink($plugin . '/logo_test.png');
+                $new_image = imagecreatetruecolor(200, 200);
+                imagealphablending($new_image, false);
+                imagesavealpha($new_image, true);
+                $transparent = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
+                imagefilledrectangle($new_image, 0, 0, 200, 200, $transparent);
+                imagecopyresampled($new_image, $image, 0, 0, 0, 0, 200, 200, $image_size[0], $image_size[1]);
+                imagepng($new_image, $logo);
+
                 imagedestroy($image);
-                imagedestroy($resource);
+                imagedestroy($new_image);
             }
+            over:
             $output->writeln("处理成功:[$plugin]");
         }
 
