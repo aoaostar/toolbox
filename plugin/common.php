@@ -3,7 +3,7 @@
 
 function plugin_alias_get()
 {
-    return trim(request()->param("alias"), '\\/');
+    return trim(request()->param("alias",""), '\\/');
 }
 
 function plugin_method_get()
