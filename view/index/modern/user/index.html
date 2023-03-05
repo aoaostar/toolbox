@@ -1,0 +1,105 @@
+{extend name="layout/layout" /}
+﻿
+{block name="title"}用户中心 - {$app.title}{/block}
+{block name="main"}
+<div class="container mx-auto mt-12" id="app">
+    <div class="card lg:card-side bordered shadow-lg flex-col md:flex-row">
+        <img class="w-20 h-20 rounded-xl mx-auto md:rounded-none md:w-80 text-center md:h-80" src="{$user->avatar}">
+        <div class="card-body">
+            <div class="card-title">
+                <h2>{{user.username}} 的个人信息</h2>
+                <a href="#username-modal" class="btn btn-xs btn-link">改个名字？</a>
+            </div>
+            <div class="divider">OAuth 信息</div>
+            {foreach $oauth as $k => $v }
+            <div class="flex items-center space-x-3">
+                <div class="avatar">
+                    <div class="mask mask-squircle w-12 h-12">
+                        <img src="/static/images/oauth/{$k}.png"/>
+                    </div>
+                </div>
+                <div>
+                    <div class="font-bold">{$k}</div>
+                    {if $v===0}
+                    <div class="text-sm opacity-50">未绑定</div>
+                    {else}
+                    <div class="text-sm opacity-50">已绑定</div>
+                    {/if}
+                </div>
+                <div>
+                    {if $v===0}
+                    <button class="btn btn-xs" @click="bind('{$k}')">点击绑定</button>
+                    {else}
+                    {/if}
+
+                </div>
+            </div>
+            {/foreach}
+        </div>
+    </div>
+    <div class="modal" id="username-modal">
+        <div class="modal-box">
+            <a href="#" class="btn btn-sm btn-circle absolute right-2 top-2">✕</a>
+            <h3 class="font-bold text-lg">修改用户名</h3>
+            <div>
+                <div class="form-control w-full">
+                    <label class="label">
+                        <span class="label-text">用户名</span>
+                    </label>
+                    <input v-model="user.username" type="text" placeholder="Type here"
+                           class="input input-bordered w-full"/>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button @click="updateUsername" class="btn">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+            user: JSON.parse('{$user|raw}'),
+        },
+        methods: {
+            updateUsername() {
+                const loading = $message.loading();
+                user_update({
+                    username: this.user.username
+                }).then(resp => {
+                    $message.success('修改成功')
+                    location.hash = ''
+                }).catch(e => {
+                    this.user.username = '{$user.username}'
+                }).finally(() => loading.close())
+            },
+            bind(action) {
+                const loading = $message.loading("正在绑定")
+                const opt = {
+                    width: 700,
+                    height: 700,
+                    left: (window.screen.availWidth - 30 - 500) / 2,
+                    top: (window.screen.availHeight - 30 - 500) / 2,
+                }
+                window.open(`{:url('auth/oauth')}/${action}/?action=bind`, 'Bind', `height=${opt.height}, width=${opt.width}, top=${opt.top}, left=${opt.left}, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no`)
+
+                window.addEventListener('message', function (e) {
+                    try {
+                        const data = e.data
+                        if (data?.status !== 'ok') {
+                            $message.error(data?.message || '绑定失败')
+                            return
+                        }
+                        window.location.reload()
+                    } finally {
+                        loading.close()
+                    }
+                }, false)
+            }
+        },
+    })
+</script>
+{/block}

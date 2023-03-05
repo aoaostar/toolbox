@@ -1,0 +1,83 @@
+<html data-theme="light">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>{block name="title"}标题{/block}</title>
+    <link rel="icon" href="/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="keywords" content="{$plugin.title},{$app.keywords}">
+    <meta name="description" content="{$plugin.desc}">
+    <meta name="author" content="Pluto"/>
+
+<!--    <link href="{:cdnjs_cdn()}/daisyui/2.42.1/styled.min.css" rel="stylesheet" type="text/css"/>-->
+    <link href="{:cdnjs_cdn()}/daisyui/2.42.1/unstyled.min.css" rel="stylesheet" type="text/css"/>
+    <script src="{:cdnjs_cdn()}/limonte-sweetalert2/11.6.15/sweetalert2.all.min.js"></script>
+    <script src="{:cdnjs_cdn()}/vue/2.7.14/vue.min.js"></script>
+    <script src="{:cdnjs_cdn()}/axios/1.2.1/axios.min.js"></script>
+    <script src="{:cdnjs_cdn()}/core-js/3.26.1/minified.min.js"></script>
+
+    <script src="/static/http.js?v={:get_version()}"></script>
+    <script src="/static/common.js?v={:get_version()}"></script>
+    <script src="/static/api.js?v={:get_version()}"></script>
+    <script src="/static/lib/tailwindcss/3.2.4/full.js"></script>
+    <link rel="stylesheet" href="/static/style.css?v={:get_version()}">
+    {block name="head"}{/block}
+</head>
+<body>
+<div class="site-main">
+    {include file="layout/header" /}
+    <div class="container mx-auto my-4" id="plugin-info">
+        <div class="card lg:card-side bordered shadow-lg flex-row">
+            <img class="w-32 h-32" src="{$plugin.logo}?v={$plugin.version}">
+            <div class="card-body">
+                <div class="card-title flex-wrap">
+                    <h2>{$plugin.title}</h2>
+                    <button v-if="user.stars.indexOf('{$plugin.alias}')===-1" class="btn btn-ghost btn-sm rounded-btn"
+                            @click="star('{$plugin.alias}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             class="inline-block w-5 mr-2 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        Star
+                    </button>
+                    <button v-else class="btn btn-ghost btn-sm rounded-btn" @click="star('{$plugin.alias}','remove')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                             class="inline-block w-5 mr-2 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  fill="#d63031"
+                                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        UnStar
+                    </button>
+                </div>
+                <p>{$plugin.desc}</p>
+            </div>
+        </div>
+    </div>
+    {block name="main"}主内容{/block}
+</div>
+<div class="site-footer">
+    {include file="layout/footer" /}
+</div>
+<script src="/static/lib/theme-change/2.0.2/index.js"></script>
+<script>
+    new Vue({
+        el: '#plugin-info',
+        data: {
+            user: JSON.parse('{$user|raw}')
+        },
+        methods: {
+            star(pluginAlias, action = 'add') {
+                return star(pluginAlias, action).then(res => {
+                    if (res.status === 'ok') {
+                        this.user.stars = res.data;
+                    }
+                })
+            }
+        }
+    })
+</script>
+{block name="footer"}主内容{/block}
+{include file="layout/plugin_record" /}
+</body>
+</html>
