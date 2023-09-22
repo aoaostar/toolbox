@@ -36,7 +36,7 @@ class Install extends Base
     {
         // 检查安装环境
         $requirements = [
-            'php_version' => PHP_VERSION >= self::PHP_VERSION,
+            'php_version' => version_compare(PHP_VERSION, self::PHP_VERSION, '>='),
             'pdo_mysql' => extension_loaded("pdo_mysql"),
 //            'zend_opcache' => extension_loaded("Zend OPcache"),
             'curl' => extension_loaded("curl"),
